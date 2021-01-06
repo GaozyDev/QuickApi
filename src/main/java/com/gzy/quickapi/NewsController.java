@@ -17,6 +17,7 @@ public class NewsController {
     @GetMapping("/news")
     public String news() {
         String result = "";
+        StringBuilder stringBuilder = new StringBuilder();
         BufferedReader bufferedReader = null;
         try {
             URL url = new URL("https://m.ithome.com");
@@ -24,8 +25,9 @@ public class NewsController {
             bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String string;
             while ((string = bufferedReader.readLine()) != null) {
-                result = matchItemData(string);
+                stringBuilder.append(string);
             }
+            result = matchItemData(stringBuilder.toString());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -53,7 +55,7 @@ public class NewsController {
                 stringBuilder.append(matchItemTitle(s));
                 i++;
             }
-            if (i > 10) {
+            if (i > 5) {
                 break;
             }
         }
