@@ -16,28 +16,15 @@ public class NewsController {
 
     @GetMapping("/news")
     public String news() {
-        StringBuilder result = new StringBuilder();
+        String result = "";
         BufferedReader bufferedReader = null;
-        String regex = "<p class=\"plc-title\">.*?</p>";
-        Pattern pattern = Pattern.compile(regex);
         try {
             URL url = new URL("https://m.ithome.com");
             URLConnection connection = url.openConnection();
-            bufferedReader = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String string;
             while ((string = bufferedReader.readLine()) != null) {
-                Matcher matcher = pattern.matcher(string);
-                int i = 0;
-                while (matcher.find()) {
-                    result.append(matcher.group().replace("<p class=\"plc-title\">", "").replace("</p>", ""));
-                    result.append(System.getProperty("line.separator"));
-                    result.append(System.getProperty("line.separator"));
-                    i++;
-                    if (i > 5) {
-                        break;
-                    }
-                }
+                result = matchItemData(string);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,7 +37,39 @@ public class NewsController {
                 e.printStackTrace();
             }
         }
-        System.out.println(result.toString());
-        return result.toString();
+        System.out.println(result);
+        return result;
+    }
+
+    private String matchItemData(String string) {
+        String regex = "<div class=\"plc-con\">.*?</div>";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(string);
+        StringBuilder stringBuilder = new StringBuilder();
+        int i = 0;
+        while (matcher.find()) {
+            String s = matcher.group();
+            if (!s.contains("<span class=\"tip tip-gray\">广告</span>")) {
+                stringBuilder.append(matchItemTitle(s));
+                i++;
+            }
+            if (i > 10) {
+                break;
+            }
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private String matchItemTitle(String string) {
+        String regex = "<p class=\"plc-title\">.*?</p>";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(string);
+        StringBuilder stringBuilder = new StringBuilder();
+        while (matcher.find()) {
+            stringBuilder.append(matcher.group().replace("<p class=\"plc-title\">", "").replace("</p>", ""));
+            stringBuilder.append(System.getProperty("line.separator")).append(System.getProperty("line.separator"));
+        }
+        return stringBuilder.toString();
     }
 }
