@@ -55,7 +55,7 @@ public class NewsController {
                 stringBuilder.append(matchItemTitle(s));
                 i++;
             }
-            if (i > 5) {
+            if (i > 7) {
                 break;
             }
         }
