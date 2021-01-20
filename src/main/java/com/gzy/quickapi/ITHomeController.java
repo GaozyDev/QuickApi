@@ -1,6 +1,7 @@
 package com.gzy.quickapi;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.BufferedReader;
@@ -12,10 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestController
-public class NewsController {
+public class ITHomeController {
 
-    @GetMapping("/news")
-    public String news() {
+    @GetMapping("/ITHome")
+    public String news(@RequestParam(name = "num", defaultValue = "6") int num) {
         String result = "";
         StringBuilder stringBuilder = new StringBuilder();
         BufferedReader bufferedReader = null;
@@ -27,7 +28,7 @@ public class NewsController {
             while ((string = bufferedReader.readLine()) != null) {
                 stringBuilder.append(string);
             }
-            result = matchItemData(stringBuilder.toString());
+            result = matchItemData(stringBuilder.toString(), num);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -43,7 +44,7 @@ public class NewsController {
         return result;
     }
 
-    private String matchItemData(String string) {
+    private String matchItemData(String string, int num) {
         String regex = "<div class=\"plc-con\">.*?</div>";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(string);
@@ -55,7 +56,7 @@ public class NewsController {
                 stringBuilder.append(matchItemTitle(s));
                 i++;
             }
-            if (i > 7) {
+            if (i > num) {
                 break;
             }
         }
