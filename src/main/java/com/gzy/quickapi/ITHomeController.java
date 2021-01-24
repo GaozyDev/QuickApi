@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class ITHomeController {
 
     @GetMapping("/ITHome")
-    public String news(@RequestParam(name = "num", defaultValue = "6") int num) {
+    public String itHome(@RequestParam(name = "num", defaultValue = "6") int num) {
         String result = "";
         StringBuilder stringBuilder = new StringBuilder();
         BufferedReader bufferedReader = null;
