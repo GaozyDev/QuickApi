@@ -15,6 +15,7 @@ public class WeatherController {
     @GetMapping("/weather")
     public String itHome(@RequestParam(name = "longitude", defaultValue = "118.78") double longitude,
                          @RequestParam(name = "latitude", defaultValue = "32.07") double latitude) {
+        // 接口文档：https://open.caiyunapp.com/%E9%80%9A%E7%94%A8%E9%A2%84%E6%8A%A5%E6%8E%A5%E5%8F%A3/v2.5
         String urlPath = "https://api.caiyunapp.com/v2/TwsDo9aQUYewFhV8/"
                 + longitude + "," + latitude
                 + "/weather.json?dailysteps=15&unit=metric:v1";
