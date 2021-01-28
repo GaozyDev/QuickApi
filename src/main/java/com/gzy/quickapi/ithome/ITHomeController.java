@@ -1,4 +1,4 @@
-package com.gzy.quickapi;
+package com.gzy.quickapi.ithome;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
