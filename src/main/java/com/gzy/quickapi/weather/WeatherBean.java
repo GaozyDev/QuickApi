@@ -124,6 +124,7 @@ public class WeatherBean {
         private DailyBean daily;
         private int primary;
         private String forecast_keypoint;
+        private AlertBean alert;
 
         public RealtimeBean getRealtime() {
             return realtime;
@@ -171,6 +172,14 @@ public class WeatherBean {
 
         public void setForecast_keypoint(String forecast_keypoint) {
             this.forecast_keypoint = forecast_keypoint;
+        }
+
+        public AlertBean getAlert() {
+            return alert;
+        }
+
+        public void setAlert(AlertBean alert) {
+            this.alert = alert;
         }
 
         public static class RealtimeBean {
@@ -2370,6 +2379,165 @@ public class WeatherBean {
 
                 public void setValue(String value) {
                     this.value = value;
+                }
+            }
+        }
+
+        public static class AlertBean {
+            private String status;
+            private List<ContentBean> content;
+
+            public String getStatus() {
+                return status;
+            }
+
+            public void setStatus(String status) {
+                this.status = status;
+            }
+
+            public List<ContentBean> getContent() {
+                return content;
+            }
+
+            public void setContent(List<ContentBean> content) {
+                this.content = content;
+            }
+
+            public static class ContentBean {
+                private String request_status;
+                private String alertId;
+                private List<Double> latlon;
+                long pubtimestamp;
+                private String status;
+                private String regionId;
+                private String adcode;
+                private String location;
+                private String province;
+                private String city;
+                private String county;
+                private String code;
+                private String source;
+                private String title;
+                private String description;
+
+                public String getRequest_status() {
+                    return request_status;
+                }
+
+                public void setRequest_status(String request_status) {
+                    this.request_status = request_status;
+                }
+
+                public String getAlertId() {
+                    return alertId;
+                }
+
+                public void setAlertId(String alertId) {
+                    this.alertId = alertId;
+                }
+
+                public List<Double> getLatlon() {
+                    return latlon;
+                }
+
+                public void setLatlon(List<Double> latlon) {
+                    this.latlon = latlon;
+                }
+
+                public long getPubtimestamp() {
+                    return pubtimestamp;
+                }
+
+                public void setPubtimestamp(long pubtimestamp) {
+                    this.pubtimestamp = pubtimestamp;
+                }
+
+                public String getStatus() {
+                    return status;
+                }
+
+                public void setStatus(String status) {
+                    this.status = status;
+                }
+
+                public String getRegionId() {
+                    return regionId;
+                }
+
+                public void setRegionId(String regionId) {
+                    this.regionId = regionId;
+                }
+
+                public String getAdcode() {
+                    return adcode;
+                }
+
+                public void setAdcode(String adcode) {
+                    this.adcode = adcode;
+                }
+
+                public String getLocation() {
+                    return location;
+                }
+
+                public void setLocation(String location) {
+                    this.location = location;
+                }
+
+                public String getProvince() {
+                    return province;
+                }
+
+                public void setProvince(String province) {
+                    this.province = province;
+                }
+
+                public String getCity() {
+                    return city;
+                }
+
+                public void setCity(String city) {
+                    this.city = city;
+                }
+
+                public String getCounty() {
+                    return county;
+                }
+
+                public void setCounty(String county) {
+                    this.county = county;
+                }
+
+                public String getCode() {
+                    return code;
+                }
+
+                public void setCode(String code) {
+                    this.code = code;
+                }
+
+                public String getSource() {
+                    return source;
+                }
+
+                public void setSource(String source) {
+                    this.source = source;
+                }
+
+                public String getTitle() {
+                    return title;
+                }
+
+                public void setTitle(String title) {
+                    this.title = title;
+                }
+
+                public String getDescription() {
+                    return description;
+                }
+
+                public void setDescription(String description) {
+                    this.description = description;
                 }
             }
         }
