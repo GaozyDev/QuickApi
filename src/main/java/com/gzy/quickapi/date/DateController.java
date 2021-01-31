@@ -34,7 +34,7 @@ public class DateController {
     }
 
     @GetMapping("/isWorkingDay")
-    public String isWorkingDay(@RequestParam(name = "year") int year,
+    public boolean isWorkingDay(@RequestParam(name = "year") int year,
                                 @RequestParam(name = "month") int month,
                                 @RequestParam(name = "day") int day) {
         // 法定节假日
@@ -42,7 +42,7 @@ public class DateController {
             if (d.getYear() == year
                     && d.getMonth() == month
                     && (d.getDay() <= day && day <= d.getDay() + d.getDays() - 1)) {
-                return "false";
+                return false;
             }
         }
 
@@ -51,21 +51,17 @@ public class DateController {
             if (d.getYear() == year
                     && d.getMonth() == month
                     && d.getDay() == day) {
-                return "true";
+                return true;
             }
         }
 
         // 是否是周一到周五
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month - 1, day);
-        if (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY
+        return calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY
                 || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY
                 || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY
                 || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY
-                || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY) {
-            return "true";
-        } else {
-            return "false";
-        }
+                || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY;
     }
 }
