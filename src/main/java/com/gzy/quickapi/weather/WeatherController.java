@@ -15,12 +15,15 @@ public class WeatherController {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/weather")
-    public String itHome(@RequestParam(name = "longitude", defaultValue = "118.78") double longitude,
-                         @RequestParam(name = "latitude", defaultValue = "32.07") double latitude) {
+    public String itHome(@RequestParam(name = "longitude", defaultValue = "118.820351") double longitude,
+                         @RequestParam(name = "latitude", defaultValue = "32.111753") double latitude) {
         StringBuilder stringBuilder = new StringBuilder();
         String urlPath = "https://api.caiyunapp.com/v2.5/TwsDo9aQUYewFhV8/"
                 + longitude + "," + latitude
                 + "/weather.json?dailysteps=7&alert=true";
+
+        System.out.println("urlPath:" + urlPath);
+
         WeatherBean weatherBean = restTemplate.getForObject(urlPath, WeatherBean.class);
 
         WeatherBean.ResultBean resultBean = weatherBean.getResult();
@@ -33,6 +36,8 @@ public class WeatherController {
         buildSkyconDesc(stringBuilder, dailyBean);
         // 今日气温
         buildTempDesc(stringBuilder, dailyBean);
+        // 小时预报
+        buildHourlyDesc(stringBuilder, hourlyBean);
         // 当前空气质量
         buildAirDesc(stringBuilder, realtimeBean);
         // 当前空气湿度
@@ -122,14 +127,18 @@ public class WeatherController {
                 .append("最低温").append(tempMin).append("度。");
     }
 
+    private void buildHourlyDesc(StringBuilder stringBuilder, WeatherBean.ResultBean.HourlyBean hourlyBean) {
+        stringBuilder.append("当前天气").append(hourlyBean.getDescription()).append("，");
+    }
+
     private void buildAirDesc(StringBuilder stringBuilder, WeatherBean.ResultBean.RealtimeBean realtimeBean) {
         String airQualityDesc = realtimeBean.getAir_quality().getDescription().getChn();
-        stringBuilder.append("当前空气质量").append(airQualityDesc).append("，");
+        stringBuilder.append("空气质量").append(airQualityDesc).append("，");
     }
 
     private void buildHumidityDesc(StringBuilder stringBuilder, WeatherBean.ResultBean.RealtimeBean realtimeBean) {
-        double humidity = realtimeBean.getHumidity();
-        stringBuilder.append("空气相对湿度").append(humidity).append("。");
+        int humidity = (int) (realtimeBean.getHumidity() * 100);
+        stringBuilder.append("空气湿度百分之").append(humidity).append("。");
     }
 
     private boolean buildWeekSkyconDesc(StringBuilder stringBuilder, WeatherBean.ResultBean.DailyBean dailyBean) {
