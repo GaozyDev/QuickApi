@@ -15,8 +15,8 @@ public class WeatherController {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/weather")
-    public String itHome(@RequestParam(name = "longitude", defaultValue = "118.820351") double longitude,
-                         @RequestParam(name = "latitude", defaultValue = "32.111753") double latitude) {
+    public String itHome(@RequestParam(name = "longitude", defaultValue = "118.778611") double longitude,
+                         @RequestParam(name = "latitude", defaultValue = "32.043888") double latitude) {
         StringBuilder stringBuilder = new StringBuilder();
         String urlPath = "https://api.caiyunapp.com/v2.5/TwsDo9aQUYewFhV8/"
                 + longitude + "," + latitude
@@ -25,6 +25,10 @@ public class WeatherController {
         System.out.println("urlPath:" + urlPath);
 
         WeatherBean weatherBean = restTemplate.getForObject(urlPath, WeatherBean.class);
+
+        if (weatherBean == null) {
+            return stringBuilder.toString();
+        }
 
         WeatherBean.ResultBean resultBean = weatherBean.getResult();
         WeatherBean.ResultBean.RealtimeBean realtimeBean = resultBean.getRealtime();
@@ -186,9 +190,9 @@ public class WeatherController {
 
         if (!hasBadWeather) {
             if (clearDayCount > partlyCloudyDayCount / 2 + cloudyDayCount) {
-                stringBuilder.append("未来一周大部分天气不错");
+                stringBuilder.append("未来一周大部分天气不错，");
             } else {
-                stringBuilder.append("未来一周大部分阴天");
+                stringBuilder.append("未来一周大部分阴天，");
             }
         }
 
