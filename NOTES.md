@@ -149,14 +149,52 @@ public class SellerAuthorizeAspect {
 ```
 ## 7 统一异常处理
 - 统一返回格式，code message data
+```
+public class ResultVO<T> implements Serializable {
+    private Integer code;
+    private String msg;
+    private T data;
+}
+```
 - 在逻辑中抛出异常，之后统一捕获异常
+```
+// Controller
+@PostMapping("/create")
+public ResultVO<Map<String, String>> create(@Valid OrderForm orderForm,
+                                            BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+        log.error("【创建订单】参数不正确, orderForm={}", orderForm);
+        throw new SellException(ResultEnum.PARAM_ERROR.getCode(),
+                bindingResult.getFieldError().getDefaultMessage());
+    }
+    // ......
+}
+```
 #### 类注解
 - @ControllerAdvice
 #### 方法注解
 - @ExceptionHandler(value = Exception.class)
+```
+@ControllerAdvice
+public class SellExceptionHandler {
+
+    @ExceptionHandler(value = SellException.class)
+    @ResponseBody
+    public ResultVO handlerSellerException(SellException e) {
+        return ResultVOUtil.error(e.getCode(), e.getMessage());
+    }
+}
+```
 #### 
 - 自定义异常 + 枚举
-
+```
+public enum ResultEnum {
+    SUCCESS(0, "成功"),
+    PARAM_ERROR(1, "参数不正确"),
+    PRODUCT_NOT_EXIST(10, "商品不存在"),
+    // ......
+}
+```
 ## 8 单元测试
 ### Service 测试
 #### 类注解
