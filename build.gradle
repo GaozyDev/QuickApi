@@ -14,7 +14,12 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    compile "io.github.fanyong920:jvppeteer:1.1.2"
+    compile "org.apache.commons:commons-compress:1.19"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.10.0"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
 }
 
 test {

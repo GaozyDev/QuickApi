@@ -1,5 +1,13 @@
 package com.gzy.quickapi.ithome;
 
+import com.ruiyun.jvppeteer.core.Puppeteer;
+import com.ruiyun.jvppeteer.core.browser.Browser;
+import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
+import com.ruiyun.jvppeteer.core.page.ElementHandle;
+import com.ruiyun.jvppeteer.core.page.Page;
+import com.ruiyun.jvppeteer.options.LaunchOptions;
+import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
+import com.ruiyun.jvppeteer.options.PageNavigateOptions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,5 +84,32 @@ public class ITHomeController {
             stringBuilder.append(System.getProperty("line.separator")).append(System.getProperty("line.separator"));
         }
         return stringBuilder.toString();
+    }
+
+    @GetMapping("/ithome-test")
+    public String isWorkingDay() {
+
+        try {
+            BrowserFetcher.downloadIfNotExist(null);
+            ArrayList<String> argList = new ArrayList<>();
+            argList.add("--no-sandbox");
+            argList.add("--disable-setuid-sandbox");
+            LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(false)
+                    .withExecutablePath("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe")
+                    .withViewport(null).build();
+            Browser browser = Puppeteer.launch(options);
+            Page page = browser.newPage();
+
+            PageNavigateOptions navigateOptions = new PageNavigateOptions();
+            navigateOptions.setTimeout(1200000);
+            page.goTo("https://m.ithome.com/", navigateOptions);
+            page.waitForSelector("body > div.index-box > div.content > div:nth-child(1) > a > div.plc-con > p.plc-title").click();
+            ElementHandle elementHandle = page.waitForSelector("body > div.page-box > div.con-box > div.news > main > h1");
+            return (String) page.$eval("body > div.page-box > div.con-box > div.news > main > h1", "node => node.innerText");
+        } catch (InterruptedException | IOException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 }
