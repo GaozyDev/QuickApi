@@ -7,36 +7,48 @@ import com.ruiyun.jvppeteer.core.page.ElementHandle;
 import com.ruiyun.jvppeteer.core.page.Page;
 import com.ruiyun.jvppeteer.options.LaunchOptions;
 import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-@RestController
+@Controller
+@RequestMapping
 public class PS5Controller {
 
     private Date lastUpdateDate = new Date(0);
 
-    private final List<Double> priceList = new ArrayList<>();
+    private final List<ProductInfo> productInfos = new ArrayList<>();
 
-    private final StringBuilder html = new StringBuilder();
+    private double averagePrice;
+
+    private double minPrice;
 
     @GetMapping("/ps5")
-    public String ps5Price(@RequestParam(name = "digital", defaultValue = "false") boolean digital) {
+    public ModelAndView ps5Price(@RequestParam(name = "digital", defaultValue = "false") boolean digital,
+                                 Map<String, Object> map) {
 
         Date currentDate = new Date();
         if (currentDate.getTime() - lastUpdateDate.getTime() < 1000 * 60 * 10) {
-            return html.toString();
+            map.put("productInfos", productInfos);
+            map.put("average", averagePrice);
+            map.put("min", minPrice);
+            return new ModelAndView("ps5/index", map);
         }
 
         lastUpdateDate = currentDate;
-        priceList.clear();
-        html.setLength(0);
+        productInfos.clear();
+        averagePrice = 0;
+        minPrice = Double.MAX_VALUE;
 
         try {
             BrowserFetcher.downloadIfNotExist(null);
@@ -54,7 +66,7 @@ public class PS5Controller {
                 page.goTo("https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1");
             }
 
-            parsePage(page, html, priceList);
+            parsePage(page, productInfos);
 
             boolean hasNextPage;
             List<ElementHandle> pages = page.$$("#J_feed_pagenation li");
@@ -64,7 +76,7 @@ public class PS5Controller {
 
             while (hasNextPage) {
                 elementHandle.click();
-                parsePage(page, html, priceList);
+                parsePage(page, productInfos);
                 pages = page.$$("#J_feed_pagenation li");
                 elementHandle = pages.get(pages.size() - 1);
                 text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
@@ -74,27 +86,27 @@ public class PS5Controller {
             page.close();
 
             double totalPrice = 0;
-            double minPrice = Double.MAX_VALUE;
-            for (Double aDouble : priceList) {
-                totalPrice += aDouble;
-                if (minPrice > aDouble) {
-                    minPrice = aDouble;
+            for (ProductInfo productInfo : productInfos) {
+                double price = productInfo.getPrice();
+                totalPrice += price;
+                if (minPrice > price) {
+                    minPrice = price;
                 }
             }
-            double averagePrice = totalPrice / priceList.size();
-            html.append("<h3>")
-                    .append("平均价:").append(averagePrice)
-                    .append("最低价:").append(minPrice)
-                    .append("</h3>");
-            return html.toString();
+
+            averagePrice = totalPrice / productInfos.size();
+            map.put("productInfos", productInfos);
+            map.put("average", averagePrice);
+            map.put("min", minPrice);
+            return new ModelAndView("ps5/index", map);
         } catch (InterruptedException | IOException | ExecutionException e) {
             e.printStackTrace();
         }
 
-        return html.toString();
+        return new ModelAndView("ps5/index", map);
     }
 
-    private void parsePage(Page page, StringBuilder html, List<Double> priceList) {
+    private void parsePage(Page page, List<ProductInfo> productInfos) {
         try {
             page.waitForSelector("#feed-main-list");
             List<ElementHandle> elementHandles = page.$$("#feed-main-list .feed-row-wide");
@@ -106,10 +118,8 @@ public class PS5Controller {
                     String[] text = priceText.split("元");
                     if (text.length >= 1) {
                         double price = Double.parseDouble(text[0]);
-                        html.append("<div style=\"line-height:30px;\">")
-                                .append("title:").append(title).append(" priceText:").append(priceText).append(" platform:").append(platform).append("\n")
-                                .append("</div>");
-                        priceList.add(price);
+                        ProductInfo productInfo = new ProductInfo(title, price, platform);
+                        productInfos.add(productInfo);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
