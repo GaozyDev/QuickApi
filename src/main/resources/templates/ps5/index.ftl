@@ -33,11 +33,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <#list resultData.productInfos as productInfo>
+                <#list resultData.productDataList as productData>
                     <tr>
-                        <td>${productInfo.title}</td>
-                        <td>${productInfo.price}</td>
-                        <td>${productInfo.platform}</td>
+                        <td>${productData.title}</td>
+                        <td>${productData.price}</td>
+                        <td>${productData.platform}</td>
                     </tr>
                 </#list>
                 </tbody>

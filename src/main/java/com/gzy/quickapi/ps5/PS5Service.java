@@ -1,5 +1,8 @@
 package com.gzy.quickapi.ps5;
 
+import com.gzy.quickapi.ps5.bean.PriceBmob;
+import com.gzy.quickapi.ps5.bean.PriceData;
+import com.gzy.quickapi.ps5.bean.ProductData;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
@@ -7,7 +10,11 @@ import com.ruiyun.jvppeteer.core.page.ElementHandle;
 import com.ruiyun.jvppeteer.core.page.Page;
 import com.ruiyun.jvppeteer.options.LaunchOptions;
 import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,19 +25,31 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PS5Service {
 
-    public ResultData getPS5OpticalDriveProductData() {
-        return startWebCrawler("https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1");
+    public PriceData getPS5OpticalDriveProductData() {
+        PriceData priceData = startWebCrawler("https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1");
+        PriceBmob priceBmob = new PriceBmob();
+        priceBmob.setAveragePrice(priceData.getAveragePrice());
+        priceBmob.setMinPrice(priceData.getMinPrice());
+        priceBmob.setType(0);
+        savePS5Price(priceBmob);
+        return priceData;
     }
 
-    public ResultData getPS5ProductData() {
-        return startWebCrawler("https://search.smzdm.com/?c=home&s=ps5%E6%95%B0%E5%AD%97%E7%89%88&brand_id=249&min_price=3000&max_price=5000&v=b&p=1");
+    public PriceData getPS5ProductData() {
+        PriceData priceData = startWebCrawler("https://search.smzdm.com/?c=home&s=ps5%E6%95%B0%E5%AD%97%E7%89%88&brand_id=249&min_price=3000&max_price=5000&v=b&p=1");
+        PriceBmob priceBmob = new PriceBmob();
+        priceBmob.setAveragePrice(priceData.getAveragePrice());
+        priceBmob.setMinPrice(priceData.getMinPrice());
+        priceBmob.setType(1);
+        savePS5Price(priceBmob);
+        return priceData;
     }
 
-    public ResultData startWebCrawler(String url) {
-        ResultData resultData = new ResultData();
-        resultData.setUpdateDate(new Date());
-        List<ProductInfo> productInfos = new ArrayList<>();
-        resultData.setProductInfos(productInfos);
+    public PriceData startWebCrawler(String url) {
+        PriceData priceData = new PriceData();
+        priceData.setUpdateDate(new Date());
+        List<ProductData> productDataList = new ArrayList<>();
+        priceData.setProductDataList(productDataList);
 
         try {
             BrowserFetcher.downloadIfNotExist(null);
@@ -44,7 +63,7 @@ public class PS5Service {
             Page page = browser.newPage();
             page.goTo(url);
 
-            parsePage(page, productInfos);
+            parsePage(page, productDataList);
 
             boolean hasNextPage;
             List<ElementHandle> pages = page.$$("#J_feed_pagenation li");
@@ -54,7 +73,7 @@ public class PS5Service {
 
             while (hasNextPage) {
                 elementHandle.click();
-                parsePage(page, productInfos);
+                parsePage(page, productDataList);
                 pages = page.$$("#J_feed_pagenation li");
                 elementHandle = pages.get(pages.size() - 1);
                 text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
@@ -67,26 +86,26 @@ public class PS5Service {
             double totalPrice = 0;
             double minPrice = Double.MAX_VALUE;
             double averagePrice;
-            for (ProductInfo productInfo : productInfos) {
-                double price = productInfo.getPrice();
+            for (ProductData productData : productDataList) {
+                double price = productData.getPrice();
                 totalPrice += price;
                 if (minPrice > price) {
                     minPrice = price;
                 }
             }
 
-            averagePrice = totalPrice / productInfos.size();
-            resultData.setAveragePrice(averagePrice);
-            resultData.setMinPrice(minPrice);
-            return resultData;
+            averagePrice = totalPrice / productDataList.size();
+            priceData.setAveragePrice(averagePrice);
+            priceData.setMinPrice(minPrice);
+            return priceData;
         } catch (InterruptedException | IOException | ExecutionException e) {
             e.printStackTrace();
         }
 
-        return resultData;
+        return priceData;
     }
 
-    private void parsePage(Page page, List<ProductInfo> productInfos) {
+    private void parsePage(Page page, List<ProductData> productDataList) {
         try {
             page.waitForSelector("#feed-main-list");
             List<ElementHandle> elementHandles = page.$$("#feed-main-list .feed-row-wide");
@@ -104,8 +123,8 @@ public class PS5Service {
                     String[] text = priceText.split("元");
                     if (text.length >= 1) {
                         double price = Double.parseDouble(text[0]);
-                        ProductInfo productInfo = new ProductInfo(title, price, platform);
-                        productInfos.add(productInfo);
+                        ProductData productData = new ProductData(title, price, platform);
+                        productDataList.add(productData);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -114,5 +133,28 @@ public class PS5Service {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void savePS5Price(PriceBmob priceBmob) {
+        String url = "https://api2.bmob.cn/1/classes/PS5Price";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Bmob-Application-Id", "86855067edf9cf9d0132c02f2f7aed6e");
+        headers.add("X-Bmob-REST-API-Key", "42779deb594bad1d40bf134c5a91dc6c");
+        HttpEntity<PriceBmob> httpEntity = new HttpEntity<>(priceBmob, headers);
+        ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(url, httpEntity, String.class);
+        System.out.println(stringResponseEntity.getBody());
+    }
+
+    public void getPS5Price() {
+        String url = "https://api2.bmob.cn/1/classes/PS5Price";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Bmob-Application-Id", "86855067edf9cf9d0132c02f2f7aed6e");
+        headers.add("X-Bmob-REST-API-Key", "42779deb594bad1d40bf134c5a91dc6c");
+        headers.add("Content-Type", "application/json");
+        HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<Object> stringResponseEntity = restTemplate.getForEntity(url, Object.class, httpEntity);
+        System.out.println(stringResponseEntity.getBody());
     }
 }

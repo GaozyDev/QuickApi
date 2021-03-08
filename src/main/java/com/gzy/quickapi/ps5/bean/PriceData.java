@@ -1,13 +1,13 @@
-package com.gzy.quickapi.ps5;
+package com.gzy.quickapi.ps5.bean;
 
 import java.util.Date;
 import java.util.List;
 
-public class ResultData {
+public class PriceData {
 
     private Date updateDate;
 
-    private List<ProductInfo> productInfos;
+    private List<ProductData> productDataList;
 
     private double averagePrice;
 
@@ -21,12 +21,12 @@ public class ResultData {
         this.updateDate = updateDate;
     }
 
-    public List<ProductInfo> getProductInfos() {
-        return productInfos;
+    public List<ProductData> getProductDataList() {
+        return productDataList;
     }
 
-    public void setProductInfos(List<ProductInfo> productInfos) {
-        this.productInfos = productInfos;
+    public void setProductDataList(List<ProductData> productData) {
+        this.productDataList = productData;
     }
 
     public double getAveragePrice() {

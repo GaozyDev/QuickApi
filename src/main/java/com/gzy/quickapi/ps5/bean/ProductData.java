@@ -1,6 +1,6 @@
-package com.gzy.quickapi.ps5;
+package com.gzy.quickapi.ps5.bean;
 
-public class ProductInfo {
+public class ProductData {
 
     private String title;
 
@@ -8,7 +8,7 @@ public class ProductInfo {
 
     private String platform;
 
-    public ProductInfo(String title, double price, String platform) {
+    public ProductData(String title, double price, String platform) {
         this.title = title;
         this.price = price;
         this.platform = platform;
