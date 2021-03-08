@@ -22,7 +22,7 @@
     <div class="row clearfix">
         <div class="col-md-12 column">
             <h3>
-                平均价格：${average}  最低价格：${min}
+                平均价格：${resultData.averagePrice}  最低价格：${resultData.minPrice}
             </h3>
             <table class="table table-striped">
                 <thead>
@@ -33,7 +33,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <#list productInfos as productInfo>
+                <#list resultData.productInfos as productInfo>
                     <tr>
                         <td>${productInfo.title}</td>
                         <td>${productInfo.price}</td>
