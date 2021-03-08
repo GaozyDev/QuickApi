@@ -3,6 +3,7 @@ package com.gzy.quickapi.ps5;
 import com.gzy.quickapi.ps5.bean.PriceBmob;
 import com.gzy.quickapi.ps5.bean.PriceData;
 import com.gzy.quickapi.ps5.bean.ProductData;
+import com.gzy.quickapi.ps5.bean.Result;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
@@ -12,6 +13,7 @@ import com.ruiyun.jvppeteer.options.LaunchOptions;
 import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -57,7 +59,7 @@ public class PS5Service {
             argList.add("--no-sandbox");
             argList.add("--disable-setuid-sandbox");
             LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(false)
-                    .withExecutablePath("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome").build();
+                    .withExecutablePath("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe").build();
             Browser browser = Puppeteer.launch(options);
 
             Page page = browser.newPage();
@@ -146,15 +148,14 @@ public class PS5Service {
         System.out.println(stringResponseEntity.getBody());
     }
 
-    public void getPS5Price() {
+    public Result getPS5Price() {
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Bmob-Application-Id", "86855067edf9cf9d0132c02f2f7aed6e");
         headers.add("X-Bmob-REST-API-Key", "42779deb594bad1d40bf134c5a91dc6c");
-        headers.add("Content-Type", "application/json");
-        HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
-        ResponseEntity<Object> stringResponseEntity = restTemplate.getForEntity(url, Object.class, httpEntity);
-        System.out.println(stringResponseEntity.getBody());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<Result> response = restTemplate.exchange(url, HttpMethod.GET, entity, Result.class);
+        return response.getBody();
     }
 }

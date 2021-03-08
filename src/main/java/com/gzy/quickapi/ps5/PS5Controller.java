@@ -1,6 +1,8 @@
 package com.gzy.quickapi.ps5;
 
+import com.gzy.quickapi.ps5.bean.PriceBmob;
 import com.gzy.quickapi.ps5.bean.PriceData;
+import com.gzy.quickapi.ps5.bean.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -28,20 +32,29 @@ public class PS5Controller {
     public ModelAndView ps5Price(@RequestParam(name = "opticalDrive", defaultValue = "true") boolean opticalDrive,
                                  Map<String, Object> map) {
         ps5Service.getPS5Price();
-//        Date currentDate = new Date();
-//        int updateTime = 1000 * 60 * 10;
-//        if (opticalDrive) {
-//            if (opticalDrivePriceData == null
-//                    || currentDate.getTime() - opticalDrivePriceData.getUpdateDate().getTime() > updateTime) {
-//                opticalDrivePriceData = ps5Service.getPS5OpticalDriveProductData();
-//            }
-//            map.put("resultData", opticalDrivePriceData);
-//        } else {
-//            if (priceData == null || currentDate.getTime() - priceData.getUpdateDate().getTime() > updateTime) {
-//                priceData = ps5Service.getPS5ProductData();
-//            }
-//            map.put("resultData", priceData);
-//        }
+        Date currentDate = new Date();
+        int updateTime = 1000 * 60 * 10;
+        if (opticalDrive) {
+            if (opticalDrivePriceData == null
+                    || currentDate.getTime() - opticalDrivePriceData.getUpdateDate().getTime() > updateTime) {
+                opticalDrivePriceData = ps5Service.getPS5OpticalDriveProductData();
+            }
+            map.put("resultData", opticalDrivePriceData);
+        } else {
+            if (priceData == null || currentDate.getTime() - priceData.getUpdateDate().getTime() > updateTime) {
+                priceData = ps5Service.getPS5ProductData();
+            }
+            map.put("resultData", priceData);
+        }
+
+        Result result = ps5Service.getPS5Price();
+        List<Double> value= new ArrayList<>();
+        for (int i = 0; i < result.getResults().size(); i++) {
+            PriceBmob priceBmob = result.getResults().get(i);
+            value.add(priceBmob.getAveragePrice());
+        }
+        map.put("price", value);
+
         return new ModelAndView("ps5/index", map);
     }
 }

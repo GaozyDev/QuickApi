@@ -8,6 +8,10 @@ public class PriceBmob {
 
     private int type;
 
+//    private String updatedAt;
+
+//    private String objectId;
+
     public double getAveragePrice() {
         return averagePrice;
     }
@@ -31,4 +35,20 @@ public class PriceBmob {
     public void setType(int type) {
         this.type = type;
     }
+
+//    public String getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(String updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
+
+//    public String getObjectId() {
+//        return objectId;
+//    }
+//
+//    public void setObjectId(String objectId) {
+//        this.objectId = objectId;
+//    }
 }
