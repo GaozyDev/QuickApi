@@ -62,6 +62,7 @@ public class PS5Service {
             }
 
             page.close();
+            browser.close();
 
             double totalPrice = 0;
             double minPrice = Double.MAX_VALUE;
