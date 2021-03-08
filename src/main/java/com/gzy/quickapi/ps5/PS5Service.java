@@ -76,7 +76,6 @@ public class PS5Service {
             }
 
             averagePrice = totalPrice / productInfos.size();
-
             resultData.setAveragePrice(averagePrice);
             resultData.setMinPrice(minPrice);
             return resultData;
@@ -93,6 +92,12 @@ public class PS5Service {
             List<ElementHandle> elementHandles = page.$$("#feed-main-list .feed-row-wide");
             for (ElementHandle elementHandle : elementHandles) {
                 try {
+                    ElementHandle tag = elementHandle.$(".feed-block span.search-pastdue-mark");
+                    if (tag != null) {
+                        // 商品过期，售罄
+                        continue;
+                    }
+
                     String title = (String) elementHandle.$eval(".feed-block h5.feed-block-title a.feed-nowrap", "node => node.innerText", new ArrayList<>());
                     String priceText = (String) elementHandle.$eval(".feed-block h5.feed-block-title div.z-highlight", "node => node.innerText", new ArrayList<>());
                     String platform = (String) elementHandle.$eval(".feed-block div.z-feed-foot span.feed-block-extras span", "node => node.innerText", new ArrayList<>());
