@@ -28,9 +28,15 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PS5Service {
 
-    private String chromePathMac = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+    private final String chromePathMac = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
-    private String chromePathPc = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+    private final String chromePathPc = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+
+    private final String chromePathPi = "/usr/bin/chromium-browser";
+
+    private final String BMOB_APP_ID = "99f509d6b7172a5793738a41f819b98e";
+
+    private final String BMOB_APP_KEY = "baa794766cccdec74805c9d81fb60ab3";
 
     public PriceData getPS5ProductData(int type) {
         String url;
@@ -61,7 +67,7 @@ public class PS5Service {
             argList.add("--no-sandbox");
             argList.add("--disable-setuid-sandbox");
             LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(false)
-                    .withExecutablePath(chromePathMac).build();
+                    .withExecutablePath(chromePathPi).build();
             Browser browser = Puppeteer.launch(options);
 
             Page page = browser.newPage();
@@ -69,20 +75,20 @@ public class PS5Service {
 
             parsePage(page, productDataList);
 
-//            boolean hasNextPage;
-//            List<ElementHandle> pages = page.$$("#J_feed_pagenation li");
-//            ElementHandle elementHandle = pages.get(pages.size() - 1);
-//            String text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
-//            hasNextPage = "下一页".equals(text);
+            boolean hasNextPage;
+            List<ElementHandle> pages = page.$$("#J_feed_pagenation li");
+            ElementHandle elementHandle = pages.get(pages.size() - 1);
+            String text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
+            hasNextPage = "下一页".equals(text);
 
-//            while (hasNextPage) {
-//                elementHandle.click();
-//                parsePage(page, productDataList);
-//                pages = page.$$("#J_feed_pagenation li");
-//                elementHandle = pages.get(pages.size() - 1);
-//                text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
-//                hasNextPage = "下一页".equals(text);
-//            }
+            while (hasNextPage) {
+                elementHandle.click();
+                parsePage(page, productDataList);
+                pages = page.$$("#J_feed_pagenation li");
+                elementHandle = pages.get(pages.size() - 1);
+                text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
+                hasNextPage = "下一页".equals(text);
+            }
 
             page.close();
             browser.close();
@@ -143,8 +149,8 @@ public class PS5Service {
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Bmob-Application-Id", "86855067edf9cf9d0132c02f2f7aed6e");
-        headers.add("X-Bmob-REST-API-Key", "42779deb594bad1d40bf134c5a91dc6c");
+        headers.add("X-Bmob-Application-Id", BMOB_APP_ID);
+        headers.add("X-Bmob-REST-API-Key", BMOB_APP_KEY);
         HttpEntity<PriceBmob> httpEntity = new HttpEntity<>(priceBmob, headers);
         ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(url, httpEntity, String.class);
         System.out.println(stringResponseEntity.getBody());
@@ -156,8 +162,8 @@ public class PS5Service {
         String where = "{\"type\":" + type + "}";
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("where", where);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Bmob-Application-Id", "86855067edf9cf9d0132c02f2f7aed6e");
-        headers.add("X-Bmob-REST-API-Key", "42779deb594bad1d40bf134c5a91dc6c");
+        headers.add("X-Bmob-Application-Id", BMOB_APP_ID);
+        headers.add("X-Bmob-REST-API-Key", BMOB_APP_KEY);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<QueryBmobResults> response = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, QueryBmobResults.class);
         return response.getBody();

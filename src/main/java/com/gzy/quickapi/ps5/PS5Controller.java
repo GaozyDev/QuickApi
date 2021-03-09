@@ -33,7 +33,7 @@ public class PS5Controller {
     public ModelAndView ps5Price(@RequestParam(name = "opticalDrive", defaultValue = "true") boolean opticalDrive,
                                  Map<String, Object> map) {
         Date currentDate = new Date();
-        int updateTime = 1000 * 60 * 10;
+        int updateTime = 1000 * 60 * 30;
         map.put("title", opticalDrive ? "PS5光驱版" : "PS5数字版");
         if (opticalDrive) {
             if (opticalDrivePriceData == null
