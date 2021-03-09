@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>PS5</title>
+    <title>${title}</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,12 +23,15 @@
 <div class="container">
     <div class="row clearfix">
         <div class="col-md-12 column">
+            <h2>
+                ${title}
+            </h2>
             <h3>
                 平均价格：${resultData.averagePrice} 最低价格：${resultData.minPrice}
             </h3>
             <canvas id="myChart"></canvas>
 
-            <table class="table table-striped">
+            <table class="table table-striped" style="margin-top: 20px;">
                 <thead>
                 <tr>
                     <th>名称</th>
@@ -73,13 +76,20 @@
             data: {
                 labels: labelArray,
                 datasets: [{
-                    label: "PS5",
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
                     data: dataArray
                 }]
             },
-            options: {}
+            options: {
+                legend: {
+                    display: false,
+                },
+                title: {
+                    display: true,
+                    text: "价格趋势"
+                }
+            }
         });
     });
 </script>

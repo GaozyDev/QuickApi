@@ -34,6 +34,7 @@ public class PS5Controller {
                                  Map<String, Object> map) {
         Date currentDate = new Date();
         int updateTime = 1000 * 60 * 10;
+        map.put("title", opticalDrive ? "PS5光驱版" : "PS5数字版");
         if (opticalDrive) {
             if (opticalDrivePriceData == null
                     || currentDate.getTime() - opticalDrivePriceData.getUpdateDate().getTime() > updateTime) {
