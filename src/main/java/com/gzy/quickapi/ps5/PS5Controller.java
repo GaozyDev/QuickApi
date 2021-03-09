@@ -53,7 +53,7 @@ public class PS5Controller {
         List<String> labelList = new ArrayList<>();
         for (PriceBmob priceBmob : queryBmobResults.getResults()) {
             priceList.add(priceBmob.getAveragePrice());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String date = sdf.format(priceBmob.getCreateDate());
             labelList.add("\"" + date + "\"");
         }
