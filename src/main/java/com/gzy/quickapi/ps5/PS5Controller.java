@@ -1,8 +1,8 @@
 package com.gzy.quickapi.ps5;
 
-import com.gzy.quickapi.ps5.bean.BmobResult;
-import com.gzy.quickapi.ps5.bean.PriceBmob;
-import com.gzy.quickapi.ps5.bean.PriceData;
+import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
+import com.gzy.quickapi.ps5.bmob.PriceBmob;
+import com.gzy.quickapi.ps5.data.PriceData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,12 +47,14 @@ public class PS5Controller {
             map.put("resultData", priceData);
         }
 
-        BmobResult bmobResult = ps5Service.getPS5HistoryPrice(opticalDrive ? 0 : 1);
+        QueryBmobResults queryBmobResults = ps5Service.getPS5HistoryPrice(opticalDrive ? 0 : 1);
         List<Double> priceList = new ArrayList<>();
         List<String> labelList = new ArrayList<>();
-        for (PriceBmob priceBmob : bmobResult.getResults()) {
+        for (PriceBmob priceBmob : queryBmobResults.getResults()) {
             priceList.add(priceBmob.getAveragePrice());
-            labelList.add(priceBmob.getAveragePrice() + "");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String date = sdf.format(priceBmob.getCreateDate());
+            labelList.add("\"" + date + "\"");
         }
         map.put("priceList", priceList);
         map.put("labelList", labelList);

@@ -1,8 +1,8 @@
-package com.gzy.quickapi.ps5.bean;
+package com.gzy.quickapi.ps5.bmob;
 
 import java.util.List;
 
-public class BmobResult {
+public class QueryBmobResults {
     List<PriceBmob> results;
 
     public List<PriceBmob> getResults() {

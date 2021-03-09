@@ -1,4 +1,4 @@
-package com.gzy.quickapi.ps5.bean;
+package com.gzy.quickapi.ps5.data;
 
 import java.util.Date;
 import java.util.List;

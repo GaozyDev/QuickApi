@@ -21,12 +21,13 @@
 </head>
 <body>
 <div class="container">
-    <canvas id="myChart"></canvas>
     <div class="row clearfix">
         <div class="col-md-12 column">
             <h3>
                 平均价格：${resultData.averagePrice} 最低价格：${resultData.minPrice}
             </h3>
+            <canvas id="myChart"></canvas>
+
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -59,11 +60,11 @@
     $(document).ready(function () {
 
         <#list priceList as price>
-        dataArray.push(${price / 10 * 10});
+        dataArray.push(${price});
         </#list>
 
         <#list labelList as label>
-        labelArray.push("label");
+        labelArray.push(${label});
         </#list>
 
         var ctx = document.getElementById('myChart').getContext('2d');

@@ -1,9 +1,9 @@
 package com.gzy.quickapi.ps5;
 
-import com.gzy.quickapi.ps5.bean.BmobResult;
-import com.gzy.quickapi.ps5.bean.PriceBmob;
-import com.gzy.quickapi.ps5.bean.PriceData;
-import com.gzy.quickapi.ps5.bean.ProductData;
+import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
+import com.gzy.quickapi.ps5.bmob.PriceBmob;
+import com.gzy.quickapi.ps5.data.PriceData;
+import com.gzy.quickapi.ps5.data.ProductData;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
@@ -17,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -149,15 +150,16 @@ public class PS5Service {
         System.out.println(stringResponseEntity.getBody());
     }
 
-    public BmobResult getPS5HistoryPrice(int type) {
-//        String url = "https://api2.bmob.cn/1/classes/PS5Price?where={\"type\":" + type + "}";
+    public QueryBmobResults getPS5HistoryPrice(int type) {
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
+        String where = "{\"type\":" + type + "}";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("where", where);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Bmob-Application-Id", "86855067edf9cf9d0132c02f2f7aed6e");
         headers.add("X-Bmob-REST-API-Key", "42779deb594bad1d40bf134c5a91dc6c");
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<BmobResult> response = restTemplate.exchange(url, HttpMethod.GET, entity, BmobResult.class);
+        ResponseEntity<QueryBmobResults> response = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, QueryBmobResults.class);
         return response.getBody();
     }
 }

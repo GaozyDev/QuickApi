@@ -1,4 +1,4 @@
-package com.gzy.quickapi.ps5.bean;
+package com.gzy.quickapi.ps5.bmob;
 
 import java.util.Date;
 
