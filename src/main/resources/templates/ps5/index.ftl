@@ -21,6 +21,7 @@
 </head>
 <body>
 <div class="container">
+    <canvas id="myChart"></canvas>
     <div class="row clearfix">
         <div class="col-md-12 column">
             <h3>
@@ -46,8 +47,6 @@
             </table>
         </div>
     </div>
-
-    <canvas id="myChart"></canvas>
 </div>
 
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
@@ -55,36 +54,34 @@
 <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
 <script>
-    var checkedArray = [];
+    const dataArray = [];
+    const labelArray = [];
     $(document).ready(function () {
 
-        //初始化将测试集包含的用例存在数组里面
-        <#list price as item>
-        checkedArray.push("${item/100}");
+        <#list priceList as price>
+        dataArray.push(${price / 10 * 10});
+        </#list>
+
+        <#list labelList as label>
+        labelArray.push("label");
         </#list>
 
         var ctx = document.getElementById('myChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            // 要创建的图表类型
+        const chart = new Chart(ctx, {
             type: 'line',
-
-            // 数据集
             data: {
-                labels: checkedArray,
+                labels: labelArray,
                 datasets: [{
-                    label: "My First dataset",
+                    label: "PS5",
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
-                    data: checkedArray,
+                    data: dataArray
                 }]
             },
-
-            // 配置选项
             options: {}
         });
     });
 </script>
-
 
 </body>
 </html>

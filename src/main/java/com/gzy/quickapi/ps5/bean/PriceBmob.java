@@ -1,5 +1,7 @@
 package com.gzy.quickapi.ps5.bean;
 
+import java.util.Date;
+
 public class PriceBmob {
 
     private double averagePrice;
@@ -8,9 +10,7 @@ public class PriceBmob {
 
     private int type;
 
-//    private String updatedAt;
-
-//    private String objectId;
+    private Date createDate;
 
     public double getAveragePrice() {
         return averagePrice;
@@ -36,19 +36,11 @@ public class PriceBmob {
         this.type = type;
     }
 
-//    public String getUpdatedAt() {
-//        return updatedAt;
-//    }
-//
-//    public void setUpdatedAt(String updatedAt) {
-//        this.updatedAt = updatedAt;
-//    }
+    public Date getCreateDate() {
+        return createDate;
+    }
 
-//    public String getObjectId() {
-//        return objectId;
-//    }
-//
-//    public void setObjectId(String objectId) {
-//        this.objectId = objectId;
-//    }
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
 }

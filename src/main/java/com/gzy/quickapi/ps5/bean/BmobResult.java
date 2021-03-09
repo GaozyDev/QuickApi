@@ -2,7 +2,7 @@ package com.gzy.quickapi.ps5.bean;
 
 import java.util.List;
 
-public class Result {
+public class BmobResult {
     List<PriceBmob> results;
 
     public List<PriceBmob> getResults() {

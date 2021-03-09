@@ -1,9 +1,9 @@
 package com.gzy.quickapi.ps5;
 
+import com.gzy.quickapi.ps5.bean.BmobResult;
 import com.gzy.quickapi.ps5.bean.PriceBmob;
 import com.gzy.quickapi.ps5.bean.PriceData;
 import com.gzy.quickapi.ps5.bean.ProductData;
-import com.gzy.quickapi.ps5.bean.Result;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
@@ -27,22 +27,23 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PS5Service {
 
-    public PriceData getPS5OpticalDriveProductData() {
-        PriceData priceData = startWebCrawler("https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1");
-        PriceBmob priceBmob = new PriceBmob();
-        priceBmob.setAveragePrice(priceData.getAveragePrice());
-        priceBmob.setMinPrice(priceData.getMinPrice());
-        priceBmob.setType(0);
-        savePS5Price(priceBmob);
-        return priceData;
-    }
+    private String chromePathMac = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
-    public PriceData getPS5ProductData() {
-        PriceData priceData = startWebCrawler("https://search.smzdm.com/?c=home&s=ps5%E6%95%B0%E5%AD%97%E7%89%88&brand_id=249&min_price=3000&max_price=5000&v=b&p=1");
+    private String chromePathPc = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+
+    public PriceData getPS5ProductData(int type) {
+        String url;
+        if (type == 0) {
+            url = "https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1";
+        } else {
+            url = "https://search.smzdm.com/?c=home&s=ps5%E6%95%B0%E5%AD%97%E7%89%88&brand_id=249&min_price=3000&max_price=5000&v=b&p=1";
+        }
+        PriceData priceData = startWebCrawler(url);
         PriceBmob priceBmob = new PriceBmob();
         priceBmob.setAveragePrice(priceData.getAveragePrice());
         priceBmob.setMinPrice(priceData.getMinPrice());
-        priceBmob.setType(1);
+        priceBmob.setType(type);
+        priceBmob.setCreateDate(new Date());
         savePS5Price(priceBmob);
         return priceData;
     }
@@ -59,7 +60,7 @@ public class PS5Service {
             argList.add("--no-sandbox");
             argList.add("--disable-setuid-sandbox");
             LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(false)
-                    .withExecutablePath("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe").build();
+                    .withExecutablePath(chromePathMac).build();
             Browser browser = Puppeteer.launch(options);
 
             Page page = browser.newPage();
@@ -67,20 +68,20 @@ public class PS5Service {
 
             parsePage(page, productDataList);
 
-            boolean hasNextPage;
-            List<ElementHandle> pages = page.$$("#J_feed_pagenation li");
-            ElementHandle elementHandle = pages.get(pages.size() - 1);
-            String text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
-            hasNextPage = "下一页".equals(text);
+//            boolean hasNextPage;
+//            List<ElementHandle> pages = page.$$("#J_feed_pagenation li");
+//            ElementHandle elementHandle = pages.get(pages.size() - 1);
+//            String text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
+//            hasNextPage = "下一页".equals(text);
 
-            while (hasNextPage) {
-                elementHandle.click();
-                parsePage(page, productDataList);
-                pages = page.$$("#J_feed_pagenation li");
-                elementHandle = pages.get(pages.size() - 1);
-                text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
-                hasNextPage = "下一页".equals(text);
-            }
+//            while (hasNextPage) {
+//                elementHandle.click();
+//                parsePage(page, productDataList);
+//                pages = page.$$("#J_feed_pagenation li");
+//                elementHandle = pages.get(pages.size() - 1);
+//                text = (String) elementHandle.$eval("a", "node => node.innerText", new ArrayList<>());
+//                hasNextPage = "下一页".equals(text);
+//            }
 
             page.close();
             browser.close();
@@ -148,14 +149,15 @@ public class PS5Service {
         System.out.println(stringResponseEntity.getBody());
     }
 
-    public Result getPS5Price() {
+    public BmobResult getPS5HistoryPrice(int type) {
+//        String url = "https://api2.bmob.cn/1/classes/PS5Price?where={\"type\":" + type + "}";
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Bmob-Application-Id", "86855067edf9cf9d0132c02f2f7aed6e");
         headers.add("X-Bmob-REST-API-Key", "42779deb594bad1d40bf134c5a91dc6c");
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<Result> response = restTemplate.exchange(url, HttpMethod.GET, entity, Result.class);
+        ResponseEntity<BmobResult> response = restTemplate.exchange(url, HttpMethod.GET, entity, BmobResult.class);
         return response.getBody();
     }
 }
