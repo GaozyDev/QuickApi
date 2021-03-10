@@ -27,7 +27,7 @@
                 ${title}
             </h2>
             <h3>
-                平均价格：${resultData.averagePrice} 最低价格：${resultData.minPrice}
+                均价：${resultData.averagePrice}元 &nbsp; 最低价：${resultData.minPrice}元
             </h3>
             <canvas id="myChart"></canvas>
 
@@ -79,7 +79,7 @@
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
                     data: dataArray
-                }]
+                },]
             },
             options: {
                 legend: {

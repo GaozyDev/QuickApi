@@ -22,9 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -36,9 +34,13 @@ public class PS5Service {
 
     private final String chromePathPi = "/usr/bin/chromium";
 
-    private final String BMOB_APP_ID = "99f509d6b7172a5793738a41f819b98e";
+    private final String BMOB_APP_ID = "86855067edf9cf9d0132c02f2f7aed6e";
 
-    private final String BMOB_APP_KEY = "baa794766cccdec74805c9d81fb60ab3";
+    private final String BMOB_APP_KEY = "42779deb594bad1d40bf134c5a91dc6c";
+
+//    private final String BMOB_APP_ID = "99f509d6b7172a5793738a41f819b98e";
+//
+//    private final String BMOB_APP_KEY = "baa794766cccdec74805c9d81fb60ab3";
 
     private static final Logger logger = LoggerFactory.getLogger(PS5Service.class.getName());
 
@@ -71,7 +73,7 @@ public class PS5Service {
             argList.add("--no-sandbox");
             argList.add("--disable-setuid-sandbox");
             LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(true)
-                    .withExecutablePath(chromePathPi).build();
+                    .withExecutablePath(chromePathPc).build();
             Browser browser = Puppeteer.launch(options);
 
             Page page = browser.newPage();
@@ -97,18 +99,20 @@ public class PS5Service {
             page.close();
             browser.close();
 
-            double totalPrice = 0;
-            double minPrice = Double.MAX_VALUE;
-            double averagePrice;
-            for (ProductData productData : productDataList) {
-                double price = productData.getPrice();
-                totalPrice += price;
-                if (minPrice > price) {
-                    minPrice = price;
-                }
+            productDataList.sort(Comparator.comparing(ProductData::getPrice));
+
+            double averagePrice = Double.MAX_VALUE;
+            OptionalDouble average = productDataList.stream().mapToDouble(ProductData::getPrice).average();
+            if (average.isPresent()) {
+                averagePrice = average.getAsDouble();
             }
 
-            averagePrice = totalPrice / productDataList.size();
+            double minPrice = Double.MAX_VALUE;
+            OptionalDouble min = productDataList.stream().mapToDouble(ProductData::getPrice).min();
+            if (min.isPresent()) {
+                minPrice = min.getAsDouble();
+            }
+
             priceData.setAveragePrice(averagePrice);
             priceData.setMinPrice(minPrice);
             return priceData;
