@@ -1,7 +1,7 @@
 package com.gzy.quickapi.ps5;
 
-import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
 import com.gzy.quickapi.ps5.bmob.PriceBmob;
+import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
 import com.gzy.quickapi.ps5.data.PriceData;
 import com.gzy.quickapi.ps5.data.ProductData;
 import com.ruiyun.jvppeteer.core.Puppeteer;
@@ -11,6 +11,8 @@ import com.ruiyun.jvppeteer.core.page.ElementHandle;
 import com.ruiyun.jvppeteer.core.page.Page;
 import com.ruiyun.jvppeteer.options.LaunchOptions;
 import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,11 +34,13 @@ public class PS5Service {
 
     private final String chromePathPc = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 
-    private final String chromePathPi = "/usr/bin/chromium-browser";
+    private final String chromePathPi = "/usr/bin/chromium";
 
     private final String BMOB_APP_ID = "99f509d6b7172a5793738a41f819b98e";
 
     private final String BMOB_APP_KEY = "baa794766cccdec74805c9d81fb60ab3";
+
+    private static final Logger logger = LoggerFactory.getLogger(PS5Service.class.getName());
 
     public PriceData getPS5ProductData(int type) {
         String url;
@@ -66,7 +70,7 @@ public class PS5Service {
             ArrayList<String> argList = new ArrayList<>();
             argList.add("--no-sandbox");
             argList.add("--disable-setuid-sandbox");
-            LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(false)
+            LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(true)
                     .withExecutablePath(chromePathPi).build();
             Browser browser = Puppeteer.launch(options);
 
@@ -110,6 +114,7 @@ public class PS5Service {
             return priceData;
         } catch (InterruptedException | IOException | ExecutionException e) {
             e.printStackTrace();
+            logger.error("[浏览器错误]" + e);
         }
 
         return priceData;
@@ -138,10 +143,12 @@ public class PS5Service {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    logger.error("[HTML解析错误]" + e);
                 }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+            logger.error("[抓包错误]" + e);
         }
     }
 
