@@ -11,6 +11,8 @@ public class PriceData {
 
     private double averagePrice;
 
+    private double minAveragePrice;
+
     private double minPrice;
 
     public Date getUpdateDate() {
@@ -27,6 +29,14 @@ public class PriceData {
 
     public void setProductDataList(List<ProductData> productData) {
         this.productDataList = productData;
+    }
+
+    public double getMinAveragePrice() {
+        return minAveragePrice;
+    }
+
+    public void setMinAveragePrice(double minAveragePrice) {
+        this.minAveragePrice = minAveragePrice;
     }
 
     public double getAveragePrice() {

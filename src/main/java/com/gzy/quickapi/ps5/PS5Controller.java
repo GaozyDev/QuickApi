@@ -50,14 +50,17 @@ public class PS5Controller {
 
         QueryBmobResults queryBmobResults = ps5Service.getPS5HistoryPrice(opticalDrive ? 0 : 1);
         List<Double> priceList = new ArrayList<>();
+        List<Double> minPriceList = new ArrayList<>();
         List<String> labelList = new ArrayList<>();
         for (PriceBmob priceBmob : queryBmobResults.getResults()) {
             priceList.add(priceBmob.getAveragePrice());
+            minPriceList.add(priceBmob.getMinAveragePrice());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String date = sdf.format(priceBmob.getCreateDate());
             labelList.add("\"" + date + "\"");
         }
         map.put("priceList", priceList);
+        map.put("minPriceList", minPriceList);
         map.put("labelList", labelList);
 
         return new ModelAndView("ps5/index", map);

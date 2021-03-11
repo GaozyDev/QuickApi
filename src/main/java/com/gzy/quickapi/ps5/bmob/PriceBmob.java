@@ -6,6 +6,8 @@ public class PriceBmob {
 
     private double averagePrice;
 
+    private double minAveragePrice;
+
     private double minPrice;
 
     private int type;
@@ -18,6 +20,14 @@ public class PriceBmob {
 
     public void setAveragePrice(double averagePrice) {
         this.averagePrice = averagePrice;
+    }
+
+    public double getMinAveragePrice() {
+        return minAveragePrice;
+    }
+
+    public void setMinAveragePrice(double minAveragePrice) {
+        this.minAveragePrice = minAveragePrice;
     }
 
     public double getMinPrice() {

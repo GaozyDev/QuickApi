@@ -58,12 +58,17 @@
 <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
 <script>
-    const dataArray = [];
+    const averagePriceArray = [];
+    const minAveragePriceArray = [];
     const labelArray = [];
     $(document).ready(function () {
 
         <#list priceList as price>
-        dataArray.push(${price});
+        averagePriceArray.push(${price});
+        </#list>
+
+        <#list minPriceList as price>
+        minAveragePriceArray.push(${price});
         </#list>
 
         <#list labelList as label>
@@ -76,18 +81,32 @@
             data: {
                 labels: labelArray,
                 datasets: [{
+                    label:"市场均价",
+                    fill: false,
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
-                    data: dataArray
-                },]
+                    data: averagePriceArray
+                }, {
+                    label:"取市场20%低价计算均价",
+                    fill: false,
+                    backgroundColor: 'rgb(0, 152, 288)',
+                    borderColor: 'rgb(0, 152, 288)',
+                    data: minAveragePriceArray
+                }]
             },
             options: {
-                legend: {
-                    display: false,
-                },
                 title: {
                     display: true,
                     text: "价格趋势"
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 3000,
+                            max: 6000,
+                            stepSize: 500
+                        },
+                    }]
                 }
             }
         });

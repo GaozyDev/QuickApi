@@ -28,18 +28,14 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PS5Service {
 
-    private final String chromePathMac = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-
-    private final String chromePathPc = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-
-    private final String chromePathPi = "/usr/bin/chromium";
-
+    private final String chromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+    //    private final String chromePath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
     private final String BMOB_APP_ID = "86855067edf9cf9d0132c02f2f7aed6e";
-
     private final String BMOB_APP_KEY = "42779deb594bad1d40bf134c5a91dc6c";
 
+    // 线上环境
+//    private final String chromePath = "/usr/bin/chromium";
 //    private final String BMOB_APP_ID = "99f509d6b7172a5793738a41f819b98e";
-//
 //    private final String BMOB_APP_KEY = "baa794766cccdec74805c9d81fb60ab3";
 
     private static final Logger logger = LoggerFactory.getLogger(PS5Service.class.getName());
@@ -54,6 +50,7 @@ public class PS5Service {
         PriceData priceData = startWebCrawler(url);
         PriceBmob priceBmob = new PriceBmob();
         priceBmob.setAveragePrice(priceData.getAveragePrice());
+        priceBmob.setMinAveragePrice(priceData.getMinAveragePrice());
         priceBmob.setMinPrice(priceData.getMinPrice());
         priceBmob.setType(type);
         priceBmob.setCreateDate(new Date());
@@ -73,7 +70,7 @@ public class PS5Service {
             argList.add("--no-sandbox");
             argList.add("--disable-setuid-sandbox");
             LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(true)
-                    .withExecutablePath(chromePathPc).build();
+                    .withExecutablePath(chromePath).build();
             Browser browser = Puppeteer.launch(options);
 
             Page page = browser.newPage();
@@ -107,6 +104,12 @@ public class PS5Service {
                 averagePrice = average.getAsDouble();
             }
 
+            double minAveragePrice = Double.MAX_VALUE;
+            OptionalDouble minAverage = productDataList.subList(0, productDataList.size() / 5).stream().mapToDouble(ProductData::getPrice).average();
+            if (minAverage.isPresent()) {
+                minAveragePrice = minAverage.getAsDouble();
+            }
+
             double minPrice = Double.MAX_VALUE;
             OptionalDouble min = productDataList.stream().mapToDouble(ProductData::getPrice).min();
             if (min.isPresent()) {
@@ -114,11 +117,12 @@ public class PS5Service {
             }
 
             priceData.setAveragePrice(averagePrice);
+            priceData.setMinAveragePrice(minAveragePrice);
             priceData.setMinPrice(minPrice);
             return priceData;
         } catch (InterruptedException | IOException | ExecutionException e) {
             e.printStackTrace();
-            logger.error("[浏览器错误]" + e);
+//            logger.error("[浏览器错误]" + e);
         }
 
         return priceData;
@@ -147,12 +151,12 @@ public class PS5Service {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    logger.error("[HTML解析错误]" + e);
+//                    logger.error("[HTML解析错误]" + e);
                 }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-            logger.error("[抓包错误]" + e);
+//            logger.error("[抓包错误]" + e);
         }
     }
 
