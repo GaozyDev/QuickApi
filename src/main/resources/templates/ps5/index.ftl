@@ -60,15 +60,20 @@
 <script>
     const averagePriceArray = [];
     const minAveragePriceArray = [];
+    const minPriceArray = [];
     const labelArray = [];
     $(document).ready(function () {
 
-        <#list priceList as price>
+        <#list averagePriceList as price>
         averagePriceArray.push(${price});
         </#list>
 
-        <#list minPriceList as price>
+        <#list minAveragePriceList as price>
         minAveragePriceArray.push(${price});
+        </#list>
+
+        <#list minPriceList as price>
+        minPriceArray.push(${price});
         </#list>
 
         <#list labelList as label>
@@ -81,17 +86,23 @@
             data: {
                 labels: labelArray,
                 datasets: [{
-                    label:"市场均价",
+                    label: "市场均价",
                     fill: false,
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
                     data: averagePriceArray
                 }, {
-                    label:"取市场20%低价计算均价",
+                    label: "取市场20%低价计算均价",
                     fill: false,
                     backgroundColor: 'rgb(0, 152, 288)',
                     borderColor: 'rgb(0, 152, 288)',
                     data: minAveragePriceArray
+                }, {
+                    label: "最低价",
+                    fill: false,
+                    backgroundColor: 'rgb(38, 184, 183)',
+                    borderColor: 'rgb(38, 184, 183)',
+                    data: minPriceArray
                 }]
             },
             options: {
