@@ -29,8 +29,10 @@
             <h3>
                 均价：${resultData.averagePrice}元 &nbsp; 最低价：${resultData.minPrice}元
             </h3>
-            <canvas id="myChart"></canvas>
-
+            <h5>
+                取市场20%低价计算均价：${resultData.minAveragePrice}元
+            </h5>
+            <canvas id="chart"></canvas>
             <table class="table table-striped" style="margin-top: 20px;">
                 <thead>
                 <tr>
@@ -80,13 +82,13 @@
         labelArray.push(${label});
         </#list>
 
-        var ctx = document.getElementById('myChart').getContext('2d');
+        var ctx = document.getElementById('chart').getContext('2d');
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labelArray,
                 datasets: [{
-                    label: "市场均价",
+                    label: "均价",
                     fill: false,
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
@@ -110,15 +112,7 @@
                     display: true,
                     text: "价格趋势"
                 },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            min: 3000,
-                            max: 6000,
-                            stepSize: 500
-                        },
-                    }]
-                }
+
             }
         });
     });

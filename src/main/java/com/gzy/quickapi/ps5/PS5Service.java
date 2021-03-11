@@ -1,5 +1,6 @@
 package com.gzy.quickapi.ps5;
 
+import com.gzy.quickapi.Constant;
 import com.gzy.quickapi.ps5.bmob.PriceBmob;
 import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
 import com.gzy.quickapi.ps5.data.PriceData;
@@ -13,6 +14,7 @@ import com.ruiyun.jvppeteer.options.LaunchOptions;
 import com.ruiyun.jvppeteer.options.LaunchOptionsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,15 +30,8 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PS5Service {
 
-    private final String chromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-    //    private final String chromePath = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
-    private final String BMOB_APP_ID = "86855067edf9cf9d0132c02f2f7aed6e";
-    private final String BMOB_APP_KEY = "42779deb594bad1d40bf134c5a91dc6c";
-
-    // 线上环境
-//    private final String chromePath = "/usr/bin/chromium";
-//    private final String BMOB_APP_ID = "99f509d6b7172a5793738a41f819b98e";
-//    private final String BMOB_APP_KEY = "baa794766cccdec74805c9d81fb60ab3";
+    @Autowired
+    private Constant constant;
 
     private static final Logger logger = LoggerFactory.getLogger(PS5Service.class.getName());
 
@@ -70,7 +65,7 @@ public class PS5Service {
             argList.add("--no-sandbox");
             argList.add("--disable-setuid-sandbox");
             LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(true)
-                    .withExecutablePath(chromePath).build();
+                    .withExecutablePath(constant.getChromePath()).build();
             Browser browser = Puppeteer.launch(options);
 
             Page page = browser.newPage();
@@ -122,7 +117,7 @@ public class PS5Service {
             return priceData;
         } catch (InterruptedException | IOException | ExecutionException e) {
             e.printStackTrace();
-//            logger.error("[浏览器错误]" + e);
+            logger.error("[浏览器错误]" + e);
         }
 
         return priceData;
@@ -151,12 +146,12 @@ public class PS5Service {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-//                    logger.error("[HTML解析错误]" + e);
+                    logger.error("[HTML解析错误]" + e);
                 }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-//            logger.error("[抓包错误]" + e);
+            logger.error("[抓包错误]" + e);
         }
     }
 
@@ -164,8 +159,8 @@ public class PS5Service {
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Bmob-Application-Id", BMOB_APP_ID);
-        headers.add("X-Bmob-REST-API-Key", BMOB_APP_KEY);
+        headers.add("X-Bmob-Application-Id", constant.getBmobAppId());
+        headers.add("X-Bmob-REST-API-Key", constant.getBmobAppKey());
         HttpEntity<PriceBmob> httpEntity = new HttpEntity<>(priceBmob, headers);
         ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(url, httpEntity, String.class);
         System.out.println(stringResponseEntity.getBody());
@@ -177,8 +172,8 @@ public class PS5Service {
         String where = "{\"type\":" + type + "}";
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("where", where);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Bmob-Application-Id", BMOB_APP_ID);
-        headers.add("X-Bmob-REST-API-Key", BMOB_APP_KEY);
+        headers.add("X-Bmob-Application-Id", constant.getBmobAppId());
+        headers.add("X-Bmob-REST-API-Key", constant.getBmobAppKey());
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<QueryBmobResults> response = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, QueryBmobResults.class);
         return response.getBody();

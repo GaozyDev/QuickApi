@@ -57,7 +57,7 @@ public class PS5Controller {
             averagePriceList.add(priceBmob.getAveragePrice());
             minAveragePriceList.add(priceBmob.getMinAveragePrice());
             minPriceList.add(priceBmob.getMinPrice());
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
             String date = sdf.format(priceBmob.getCreateDate());
             labelList.add("\"" + date + "\"");
         }

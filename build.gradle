@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
     implementation "io.github.fanyong920:jvppeteer:1.1.2"
     implementation "org.springframework.boot:spring-boot-starter-freemarker"
     implementation "org.projectlombok:lombok"

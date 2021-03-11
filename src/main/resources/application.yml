@@ -1,6 +1,7 @@
 spring:
+  profiles:
+    active: dev
   freemarker:
-    template-loader-path: classpath:/templates
     suffix=: .ftl
     settings:
       number_format: 0
