@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -38,9 +39,9 @@ public class PS5Controller {
         }
 
         map.put("resultData", priceData);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(priceData.getUpdateDate());
-        map.put("updateTime", calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE));
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        String date = sdf.format(priceData.getUpdateDate());
+        map.put("updateTime", date);
 
         QueryBmobResults queryBmobResults = ps5Service.getPS5HistoryPrice(opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE : PS5TypeEnum.DIGITAL_EDITION);
         List<PriceBmob> priceBmobList = queryBmobResults.getResults();
