@@ -1,4 +1,4 @@
 constant:
-  chromePath: /usr/bin/chromium
+  chromePath: /usr/bin/chromium-browser
   bmobAppId: 99f509d6b7172a5793738a41f819b98e
   bmobAppKey: baa794766cccdec74805c9d81fb60ab3
