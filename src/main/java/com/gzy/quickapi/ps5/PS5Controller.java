@@ -3,6 +3,7 @@ package com.gzy.quickapi.ps5;
 import com.gzy.quickapi.ps5.bmob.PriceBmob;
 import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
 import com.gzy.quickapi.ps5.data.PriceData;
+import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,45 +20,43 @@ public class PS5Controller {
     @Autowired
     private PS5Service ps5Service;
 
-    // 光驱版
-    private PriceData opticalDrivePriceData;
-
-    // 数字版
-    private PriceData priceData;
-
     @GetMapping("/ps5")
     public ModelAndView ps5Price(@RequestParam(name = "opticalDrive", defaultValue = "true") boolean opticalDrive,
                                  Map<String, Object> map) {
-        Date currentDate = new Date();
-        int updateTime = 1000 * 60 * 60;
-        map.put("title", opticalDrive ? "PS5光驱版" : "PS5数字版");
+        map.put("title", opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE.getTypeName() : PS5TypeEnum.DIGITAL_EDITION.getTypeName());
+        PriceData priceData;
         if (opticalDrive) {
-            if (opticalDrivePriceData == null
-                    || currentDate.getTime() - opticalDrivePriceData.getUpdateDate().getTime() > updateTime) {
-                opticalDrivePriceData = ps5Service.getPS5ProductData(0);
+            if (PS5Service.opticalDrivePriceData == null) {
+                PS5Service.opticalDrivePriceData = ps5Service.getPS5ProductData(PS5TypeEnum.OPTICAL_DRIVE);
             }
-            map.put("resultData", opticalDrivePriceData);
+            priceData = PS5Service.opticalDrivePriceData;
         } else {
-            if (priceData == null || currentDate.getTime() - priceData.getUpdateDate().getTime() > updateTime) {
-                priceData = ps5Service.getPS5ProductData(1);
+            if (PS5Service.digitalEditionPriceData == null) {
+                PS5Service.digitalEditionPriceData = ps5Service.getPS5ProductData(PS5TypeEnum.DIGITAL_EDITION);
             }
-            map.put("resultData", priceData);
+            priceData = PS5Service.digitalEditionPriceData;
         }
 
-        QueryBmobResults queryBmobResults = ps5Service.getPS5HistoryPrice(opticalDrive ? 0 : 1);
+        map.put("resultData", priceData);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(priceData.getUpdateDate());
+        map.put("updateTime", calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE));
+
+        QueryBmobResults queryBmobResults = ps5Service.getPS5HistoryPrice(opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE : PS5TypeEnum.DIGITAL_EDITION);
         List<PriceBmob> priceBmobList = queryBmobResults.getResults();
 
-        setDataToMap(map, currentDate, priceBmobList);
+        setDataToMap(map, priceBmobList);
 
         return new ModelAndView("ps5/index", map);
     }
 
-    private void setDataToMap(Map<String, Object> map, Date currentDate, List<PriceBmob> priceBmobList) {
+    private void setDataToMap(Map<String, Object> map, List<PriceBmob> priceBmobList) {
         List<Double> averagePriceList = new ArrayList<>();
         List<Double> minAveragePriceList = new ArrayList<>();
         List<Double> minPriceList = new ArrayList<>();
         List<String> labelList = new ArrayList<>();
 
+        Date currentDate = new Date();
         Calendar todayCalendar = Calendar.getInstance();
         todayCalendar.setTime(currentDate);
         int historyDataCount = 0;

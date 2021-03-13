@@ -23,9 +23,12 @@
 <div class="container">
     <div class="row clearfix">
         <div class="col-md-12 column">
-            <h2>
-                ${title}
-            </h2>
+            <div>
+                <h2>
+                    ${title}
+                    <span style="font-size: xx-small; float:right;"> ${updateTime}更新</span>
+                </h2>
+            </div>
             <h3>
                 均价：${resultData.averagePrice}元 &nbsp; 最低价：${resultData.minPrice}元
             </h3>

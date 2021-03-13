@@ -5,6 +5,7 @@ import com.gzy.quickapi.ps5.bmob.PriceBmob;
 import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
 import com.gzy.quickapi.ps5.data.PriceData;
 import com.gzy.quickapi.ps5.data.ProductData;
+import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
@@ -35,9 +36,15 @@ public class PS5Service {
 
     private static final Logger logger = LoggerFactory.getLogger(PS5Service.class.getName());
 
-    public PriceData getPS5ProductData(int type) {
+    // 光驱版
+    public static PriceData opticalDrivePriceData;
+
+    // 数字版
+    public static PriceData digitalEditionPriceData;
+
+    public PriceData getPS5ProductData(PS5TypeEnum ps5TypeEnum) {
         String url;
-        if (type == 0) {
+        if (ps5TypeEnum == PS5TypeEnum.OPTICAL_DRIVE) {
             url = "https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1";
         } else {
             url = "https://search.smzdm.com/?c=home&s=ps5%E6%95%B0%E5%AD%97%E7%89%88&brand_id=249&min_price=3000&max_price=5000&v=b&p=1";
@@ -47,7 +54,7 @@ public class PS5Service {
         priceBmob.setAveragePrice(priceData.getAveragePrice());
         priceBmob.setMinAveragePrice(priceData.getMinAveragePrice());
         priceBmob.setMinPrice(priceData.getMinPrice());
-        priceBmob.setType(type);
+        priceBmob.setType(ps5TypeEnum.getTypeCode());
         priceBmob.setCreateDate(new Date());
         savePS5Price(priceBmob);
         return priceData;
@@ -60,14 +67,7 @@ public class PS5Service {
         priceData.setProductDataList(productDataList);
 
         try {
-            BrowserFetcher.downloadIfNotExist(null);
-            ArrayList<String> argList = new ArrayList<>();
-            argList.add("--no-sandbox");
-            argList.add("--disable-setuid-sandbox");
-            LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(true)
-                    .withExecutablePath(constant.getChromePath()).build();
-            Browser browser = Puppeteer.launch(options);
-
+            Browser browser = launchBrowser();
             Page page = browser.newPage();
             page.goTo(url);
 
@@ -93,23 +93,9 @@ public class PS5Service {
 
             productDataList.sort(Comparator.comparing(ProductData::getPrice));
 
-            double averagePrice = Double.MAX_VALUE;
-            OptionalDouble average = productDataList.stream().mapToDouble(ProductData::getPrice).average();
-            if (average.isPresent()) {
-                averagePrice = average.getAsDouble();
-            }
-
-            double minAveragePrice = Double.MAX_VALUE;
-            OptionalDouble minAverage = productDataList.subList(0, productDataList.size() / 5).stream().mapToDouble(ProductData::getPrice).average();
-            if (minAverage.isPresent()) {
-                minAveragePrice = minAverage.getAsDouble();
-            }
-
-            double minPrice = Double.MAX_VALUE;
-            OptionalDouble min = productDataList.stream().mapToDouble(ProductData::getPrice).min();
-            if (min.isPresent()) {
-                minPrice = min.getAsDouble();
-            }
+            double averagePrice = calAveragePrice(productDataList);
+            double minAveragePrice = calAveragePrice(productDataList.subList(0, productDataList.size() / 5));
+            double minPrice = calMinPrice(productDataList);
 
             priceData.setAveragePrice(averagePrice);
             priceData.setMinAveragePrice(minAveragePrice);
@@ -121,6 +107,16 @@ public class PS5Service {
         }
 
         return priceData;
+    }
+
+    private Browser launchBrowser() throws InterruptedException, ExecutionException, IOException {
+        BrowserFetcher.downloadIfNotExist(null);
+        ArrayList<String> argList = new ArrayList<>();
+        argList.add("--no-sandbox");
+        argList.add("--disable-setuid-sandbox");
+        LaunchOptions options = new LaunchOptionsBuilder().withArgs(argList).withHeadless(true)
+                .withExecutablePath(constant.getChromePath()).build();
+        return Puppeteer.launch(options);
     }
 
     private void parsePage(Page page, List<ProductData> productDataList) {
@@ -155,6 +151,24 @@ public class PS5Service {
         }
     }
 
+    private double calAveragePrice(List<ProductData> productDataList) {
+        double averagePrice = Double.MAX_VALUE;
+        OptionalDouble average = productDataList.stream().mapToDouble(ProductData::getPrice).average();
+        if (average.isPresent()) {
+            averagePrice = average.getAsDouble();
+        }
+        return averagePrice;
+    }
+
+    private double calMinPrice(List<ProductData> productDataList) {
+        double minPrice = Double.MAX_VALUE;
+        OptionalDouble min = productDataList.stream().mapToDouble(ProductData::getPrice).min();
+        if (min.isPresent()) {
+            minPrice = min.getAsDouble();
+        }
+        return minPrice;
+    }
+
     public void savePS5Price(PriceBmob priceBmob) {
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
@@ -166,10 +180,10 @@ public class PS5Service {
         System.out.println(stringResponseEntity.getBody());
     }
 
-    public QueryBmobResults getPS5HistoryPrice(int type) {
+    public QueryBmobResults getPS5HistoryPrice(PS5TypeEnum ps5TypeEnum) {
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
-        String where = "{\"type\":" + type + "}&order=createDate";
+        String where = "{\"type\":" + ps5TypeEnum.getTypeCode() + "}&order=createDate";
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("where", where);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Bmob-Application-Id", constant.getBmobAppId());
