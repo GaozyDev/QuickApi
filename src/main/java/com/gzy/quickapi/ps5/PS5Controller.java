@@ -60,7 +60,7 @@ public class PS5Controller {
         Date currentDate = new Date();
         Calendar todayCalendar = Calendar.getInstance();
         todayCalendar.setTime(currentDate);
-        int historyDataCount = 0;
+        int historyDataIndex = 0;
         for (int i = priceBmobList.size() - 1; i >= 0; i--) {
             Date date = priceBmobList.get(i).getCreateDate();
             Calendar calendar = Calendar.getInstance();
@@ -69,12 +69,12 @@ public class PS5Controller {
                     todayCalendar.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) &&
                     todayCalendar.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH))
             ) {
-                historyDataCount = i;
+                historyDataIndex = i;
                 break;
             }
         }
-        List<PriceBmob> lastData = priceBmobList.subList(0, historyDataCount);
-        List<PriceBmob> todayData = priceBmobList.subList(historyDataCount, priceBmobList.size() - 1);
+        List<PriceBmob> lastData = priceBmobList.subList(0, historyDataIndex + 1);
+        List<PriceBmob> todayData = priceBmobList.subList(historyDataIndex + 1, priceBmobList.size() - 1);
 
         int dayStep = lastData.size() / 10;
 
