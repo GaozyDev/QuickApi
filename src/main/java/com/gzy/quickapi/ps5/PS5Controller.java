@@ -58,7 +58,7 @@ public class PS5Controller {
         List<String> labelList = new ArrayList<>();
 
         Date currentDate = new Date();
-        Calendar todayCalendar = Calendar.getInstance();
+        Calendar todayCalendar = Calendar.getInstance(Locale.CHINA);
         todayCalendar.setTime(currentDate);
         int historyDataIndex = 0;
         for (int i = priceBmobList.size() - 1; i >= 0; i--) {
@@ -107,7 +107,7 @@ public class PS5Controller {
             averagePriceList.add(newData.getAveragePrice());
             minAveragePriceList.add(newData.getMinAveragePrice());
             minPriceList.add(newData.getMinPrice());
-            Calendar calendar = Calendar.getInstance();
+            Calendar calendar = Calendar.getInstance(Locale.CHINA);
             calendar.setTime(newData.getCreateDate());
             labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         }

@@ -183,7 +183,7 @@ public class PS5Service {
     public QueryBmobResults getPS5HistoryPrice(PS5TypeEnum ps5TypeEnum) {
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
-        String where = "{\"type\":" + ps5TypeEnum.getTypeCode() + "}&order=createDate";
+        String where = "{\"type\":" + ps5TypeEnum.getTypeCode() + "}&order=createDate&limit=500";
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("where", where);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Bmob-Application-Id", constant.getBmobAppId());
