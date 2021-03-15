@@ -24,7 +24,7 @@
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/home/pi/Services/log/info.%d.log</fileNamePattern>
+            <fileNamePattern>/home/pi/Service/log/info.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 
@@ -40,7 +40,7 @@
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/home/pi/Services/log/error.%d.log</fileNamePattern>
+            <fileNamePattern>/home/pi/Service/log/error.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 

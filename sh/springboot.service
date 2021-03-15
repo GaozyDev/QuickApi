@@ -1,0 +1,14 @@
+# vim /usr/lib/systemd/system/springboot.service
+
+[Unit]
+Description=springboot
+After=syslog.target network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+ExecStart=/home/pi/Service/sh/start.sh
+ExecStop=/home/pi/Service/sh/stop.sh
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
