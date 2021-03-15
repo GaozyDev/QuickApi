@@ -46,12 +46,12 @@ public class PS5Controller {
         QueryBmobResults queryBmobResults = ps5Service.getPS5HistoryPrice(opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE : PS5TypeEnum.DIGITAL_EDITION);
         List<PriceBmob> priceBmobList = queryBmobResults.getResults();
 
-        setDataToMap(map, priceBmobList);
+        setChartData(map, priceBmobList);
 
         return new ModelAndView("ps5/index", map);
     }
 
-    private void setDataToMap(Map<String, Object> map, List<PriceBmob> priceBmobList) {
+    private void setChartData(Map<String, Object> map, List<PriceBmob> priceBmobList) {
         List<Double> averagePriceList = new ArrayList<>();
         List<Double> minAveragePriceList = new ArrayList<>();
         List<Double> minPriceList = new ArrayList<>();
@@ -74,7 +74,6 @@ public class PS5Controller {
             }
         }
         List<PriceBmob> lastData = priceBmobList.subList(0, historyDataIndex + 1);
-        List<PriceBmob> todayData = priceBmobList.subList(historyDataIndex + 1, priceBmobList.size() - 1);
 
         int dayStep = lastData.size() / 10;
 
@@ -103,13 +102,15 @@ public class PS5Controller {
             }
         }
 
-        PriceBmob newData = todayData.get(todayData.size() - 1);
-        averagePriceList.add(newData.getAveragePrice());
-        minAveragePriceList.add(newData.getMinAveragePrice());
-        minPriceList.add(newData.getMinPrice());
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(newData.getCreateDate());
-        labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        if (!priceBmobList.isEmpty()) {
+            PriceBmob newData = priceBmobList.get(priceBmobList.size() - 1);
+            averagePriceList.add(newData.getAveragePrice());
+            minAveragePriceList.add(newData.getMinAveragePrice());
+            minPriceList.add(newData.getMinPrice());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(newData.getCreateDate());
+            labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        }
 
         map.put("averagePriceList", averagePriceList);
         map.put("minAveragePriceList", minAveragePriceList);
