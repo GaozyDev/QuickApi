@@ -20,7 +20,7 @@ public class ScheduleTask {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduleTask.class.getName());
 
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 0 0/2 * * ?")
     private void configureTasks() {
         logger.info("定时爬虫：" + new Date());
         PS5Service.opticalDrivePriceData = ps5Service.getPS5ProductData(PS5TypeEnum.OPTICAL_DRIVE);
