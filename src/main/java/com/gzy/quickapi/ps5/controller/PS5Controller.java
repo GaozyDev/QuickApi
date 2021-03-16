@@ -1,9 +1,10 @@
-package com.gzy.quickapi.ps5;
+package com.gzy.quickapi.ps5.controller;
 
 import com.gzy.quickapi.ps5.bmob.PriceBmob;
 import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
 import com.gzy.quickapi.ps5.data.PriceData;
 import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
+import com.gzy.quickapi.ps5.service.PS5Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +77,8 @@ public class PS5Controller {
         List<PriceBmob> lastData = priceBmobList.subList(0, historyDataIndex + 1);
 
         int dayStep = lastData.size() / 10;
+        // todo bug
+        dayStep = 1;
 
         double averagePrice = 0;
         double minAveragePrice = 0;

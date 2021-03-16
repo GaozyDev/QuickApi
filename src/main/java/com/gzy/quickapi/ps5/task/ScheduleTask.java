@@ -1,6 +1,7 @@
-package com.gzy.quickapi.ps5;
+package com.gzy.quickapi.ps5.task;
 
 import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
+import com.gzy.quickapi.ps5.service.PS5Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

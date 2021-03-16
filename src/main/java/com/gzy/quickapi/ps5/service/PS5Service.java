@@ -1,11 +1,14 @@
-package com.gzy.quickapi.ps5;
+package com.gzy.quickapi.ps5.service;
 
 import com.gzy.quickapi.Constant;
 import com.gzy.quickapi.ps5.bmob.PriceBmob;
 import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
 import com.gzy.quickapi.ps5.data.PriceData;
 import com.gzy.quickapi.ps5.data.ProductData;
+import com.gzy.quickapi.ps5.dataobject.ProductPriceInfo;
 import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
+import com.gzy.quickapi.ps5.repository.ProductPriceInfoRepository;
+import com.gzy.quickapi.ps5.utils.KeyUtil;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
@@ -25,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -33,6 +37,9 @@ public class PS5Service {
 
     @Autowired
     private Constant constant;
+
+    @Autowired
+    private ProductPriceInfoRepository productPriceInfoRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(PS5Service.class.getName());
 
@@ -178,18 +185,34 @@ public class PS5Service {
         HttpEntity<PriceBmob> httpEntity = new HttpEntity<>(priceBmob, headers);
         ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(url, httpEntity, String.class);
         System.out.println(stringResponseEntity.getBody());
+
+        ProductPriceInfo productPriceInfo = new ProductPriceInfo();
+        productPriceInfo.setId(KeyUtil.genUniqueKey());
+        productPriceInfo.setAveragePrice(BigDecimal.valueOf(priceBmob.getAveragePrice()));
+        productPriceInfo.setMinAveragePrice(BigDecimal.valueOf(priceBmob.getMinAveragePrice()));
+        productPriceInfo.setMinPrice(BigDecimal.valueOf(priceBmob.getMinPrice()));
+        productPriceInfo.setProductId(String.valueOf(priceBmob.getType()));
+
+        ProductPriceInfo result = productPriceInfoRepository.save(productPriceInfo);
     }
 
     public QueryBmobResults getPS5HistoryPrice(PS5TypeEnum ps5TypeEnum) {
-        String url = "https://api2.bmob.cn/1/classes/PS5Price";
-        RestTemplate restTemplate = new RestTemplate();
-        String where = "{\"type\":" + ps5TypeEnum.getTypeCode() + "}&order=createDate&limit=500";
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("where", where);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Bmob-Application-Id", constant.getBmobAppId());
-        headers.add("X-Bmob-REST-API-Key", constant.getBmobAppKey());
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<QueryBmobResults> response = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, QueryBmobResults.class);
-        return response.getBody();
+        QueryBmobResults queryBmobResults = new QueryBmobResults();
+        List<PriceBmob> priceBmobList = new ArrayList<>();
+        queryBmobResults.setResults(priceBmobList);
+
+        List<ProductPriceInfo> list = productPriceInfoRepository.findAll();
+
+        for (ProductPriceInfo productPriceInfo : list) {
+            PriceBmob priceBmob = new PriceBmob();
+            priceBmob.setType(Integer.parseInt(productPriceInfo.getProductId()));
+            priceBmob.setAveragePrice(productPriceInfo.getAveragePrice().doubleValue());
+            priceBmob.setMinAveragePrice(productPriceInfo.getMinAveragePrice().doubleValue());
+            priceBmob.setMinPrice(productPriceInfo.getMinPrice().doubleValue());
+            priceBmob.setCreateDate(new Date());
+            priceBmobList.add(priceBmob);
+        }
+
+        return queryBmobResults;
     }
 }

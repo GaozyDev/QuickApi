@@ -1,7 +1,10 @@
 package com.gzy.quickapi;
 
 import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
+import com.gzy.quickapi.ps5.repository.ProductPriceInfoRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,7 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@SpringBootTest
 public class TestUtils {
+
+    @Autowired
+    private ProductPriceInfoRepository repository;
 
     @Test
     public void getData() {
@@ -25,5 +32,19 @@ public class TestUtils {
 
         ResponseEntity<QueryBmobResults> response = restTemplate.exchange(builder.build().toUri(), HttpMethod.GET, entity, QueryBmobResults.class);
         System.out.println(response.getBody());
+    }
+
+    @Test
+    public void saveTest() {
+//        ProductPriceInfo productPriceInfo = new ProductPriceInfo();
+//        productPriceInfo.setId("123456");
+//        productPriceInfo.setAveragePrice(new BigDecimal("3000"));
+//        productPriceInfo.setMinAveragePrice(new BigDecimal("3000"));
+//        productPriceInfo.setMinPrice(new BigDecimal("3000"));
+//        productPriceInfo.setProductId("123");
+//
+//        ProductPriceInfo result = repository.save(productPriceInfo);
+
+//        List<ProductPriceInfo> list = repository.findAll();
     }
 }

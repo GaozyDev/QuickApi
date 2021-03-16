@@ -9,6 +9,9 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
+    maven {
+        url "https://maven.aliyun.com/repository/public"
+    }
     mavenCentral()
 }
 
@@ -17,7 +20,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-configuration-processor"
     implementation "io.github.fanyong920:jvppeteer:1.1.2"
     implementation "org.springframework.boot:spring-boot-starter-freemarker"
-    implementation "org.projectlombok:lombok"
+    implementation "mysql:mysql-connector-java"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
