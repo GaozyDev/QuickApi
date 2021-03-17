@@ -1,6 +1,6 @@
-package com.gzy.quickapi.ps5.data;
+package com.gzy.quickapi.ps5.dto;
 
-public class ProductData {
+public class ProductPriceInfo {
 
     private String title;
 
@@ -8,7 +8,7 @@ public class ProductData {
 
     private String platform;
 
-    public ProductData(String title, double price, String platform) {
+    public ProductPriceInfo(String title, double price, String platform) {
         this.title = title;
         this.price = price;
         this.platform = platform;

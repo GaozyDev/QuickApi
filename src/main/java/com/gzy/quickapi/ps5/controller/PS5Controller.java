@@ -1,10 +1,9 @@
 package com.gzy.quickapi.ps5.controller;
 
-import com.gzy.quickapi.ps5.bmob.PriceBmob;
-import com.gzy.quickapi.ps5.bmob.QueryBmobResults;
-import com.gzy.quickapi.ps5.data.PriceData;
+import com.gzy.quickapi.ps5.dto.ProductPriceInfos;
+import com.gzy.quickapi.ps5.dataobject.ProductPrice;
 import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
-import com.gzy.quickapi.ps5.service.PS5Service;
+import com.gzy.quickapi.ps5.service.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -20,39 +21,37 @@ import java.util.*;
 public class PS5Controller {
 
     @Autowired
-    private PS5Service ps5Service;
+    private PriceService priceService;
 
     @GetMapping("/ps5")
     public ModelAndView ps5Price(@RequestParam(name = "opticalDrive", defaultValue = "true") boolean opticalDrive,
                                  Map<String, Object> map) {
         map.put("title", opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE.getTypeName() : PS5TypeEnum.DIGITAL_EDITION.getTypeName());
-        PriceData priceData;
+        ProductPriceInfos priceDataInfos;
         if (opticalDrive) {
-            if (PS5Service.opticalDrivePriceData == null) {
-                PS5Service.opticalDrivePriceData = ps5Service.getPS5ProductData(PS5TypeEnum.OPTICAL_DRIVE);
+            if (PriceService.opticalDriveProductPriceInfos == null) {
+                PriceService.opticalDriveProductPriceInfos = priceService.getPS5ProductData(PS5TypeEnum.OPTICAL_DRIVE);
             }
-            priceData = PS5Service.opticalDrivePriceData;
+            priceDataInfos = PriceService.opticalDriveProductPriceInfos;
         } else {
-            if (PS5Service.digitalEditionPriceData == null) {
-                PS5Service.digitalEditionPriceData = ps5Service.getPS5ProductData(PS5TypeEnum.DIGITAL_EDITION);
+            if (PriceService.digitalEditionProductPriceInfos == null) {
+                PriceService.digitalEditionProductPriceInfos = priceService.getPS5ProductData(PS5TypeEnum.DIGITAL_EDITION);
             }
-            priceData = PS5Service.digitalEditionPriceData;
+            priceDataInfos = PriceService.digitalEditionProductPriceInfos;
         }
 
-        map.put("resultData", priceData);
+        map.put("resultData", priceDataInfos);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String date = sdf.format(priceData.getUpdateDate());
+        String date = sdf.format(priceDataInfos.getUpdateDate());
         map.put("updateTime", date);
 
-        QueryBmobResults queryBmobResults = ps5Service.getPS5HistoryPrice(opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE : PS5TypeEnum.DIGITAL_EDITION);
-        List<PriceBmob> priceBmobList = queryBmobResults.getResults();
+        List<ProductPrice> productPriceData = priceService.getPS5HistoryPrice(opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE : PS5TypeEnum.DIGITAL_EDITION);
+        setChartData(map, productPriceData);
 
-        setChartData(map, priceBmobList);
-
-        return new ModelAndView("ps5/index", map);
+        return new ModelAndView("price/index", map);
     }
 
-    private void setChartData(Map<String, Object> map, List<PriceBmob> priceBmobList) {
+    private void setChartData(Map<String, Object> map, List<ProductPrice> productPriceList) {
         List<Double> averagePriceList = new ArrayList<>();
         List<Double> minAveragePriceList = new ArrayList<>();
         List<Double> minPriceList = new ArrayList<>();
@@ -62,8 +61,8 @@ public class PS5Controller {
         Calendar todayCalendar = Calendar.getInstance(Locale.CHINA);
         todayCalendar.setTime(currentDate);
         int historyDataIndex = 0;
-        for (int i = priceBmobList.size() - 1; i >= 0; i--) {
-            Date date = priceBmobList.get(i).getCreateDate();
+        for (int i = productPriceList.size() - 1; i >= 0; i--) {
+            Date date = productPriceList.get(i).getCreateTime();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
             if (!(todayCalendar.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
@@ -74,44 +73,42 @@ public class PS5Controller {
                 break;
             }
         }
-        List<PriceBmob> lastData = priceBmobList.subList(0, historyDataIndex + 1);
+        List<ProductPrice> lastData = productPriceList.subList(0, historyDataIndex + 1);
 
-        int dayStep = lastData.size() / 10;
-        // todo bug
-        dayStep = 1;
+        int dayStep = lastData.size() / 10 + 1;
 
-        double averagePrice = 0;
-        double minAveragePrice = 0;
-        double minPrice = 0;
+        BigDecimal averagePrice = new BigDecimal(BigInteger.ZERO);
+        BigDecimal minAveragePrice = new BigDecimal(BigInteger.ZERO);
+        BigDecimal minPrice = new BigDecimal(BigInteger.ZERO);
         Date date;
         for (int i = 0; i < lastData.size(); i++) {
-            PriceBmob priceBmob = lastData.get(i);
-            averagePrice += priceBmob.getAveragePrice();
-            minAveragePrice += priceBmob.getMinAveragePrice();
-            minPrice += priceBmob.getMinPrice();
-            date = lastData.get(i).getCreateDate();
+            ProductPrice productPrice = lastData.get(i);
+            averagePrice = averagePrice.add(productPrice.getAveragePrice());
+            minAveragePrice = minAveragePrice.add(productPrice.getMinAveragePrice());
+            minPrice = minPrice.add(productPrice.getMinPrice());
+            date = lastData.get(i).getCreateTime();
 
             if ((i + 1) % dayStep == 0) {
-                averagePriceList.add(averagePrice / dayStep);
-                minAveragePriceList.add(minAveragePrice / dayStep);
-                minPriceList.add(minPrice / dayStep);
+                averagePriceList.add(averagePrice.doubleValue() / dayStep);
+                minAveragePriceList.add(minAveragePrice.doubleValue() / dayStep);
+                minPriceList.add(minPrice.doubleValue() / dayStep);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
                 labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
 
-                averagePrice = 0;
-                minAveragePrice = 0;
-                minPrice = 0;
+                averagePrice = new BigDecimal(BigInteger.ZERO);
+                minAveragePrice = new BigDecimal(BigInteger.ZERO);
+                minPrice = new BigDecimal(BigInteger.ZERO);
             }
         }
 
-        if (!priceBmobList.isEmpty()) {
-            PriceBmob newData = priceBmobList.get(priceBmobList.size() - 1);
-            averagePriceList.add(newData.getAveragePrice());
-            minAveragePriceList.add(newData.getMinAveragePrice());
-            minPriceList.add(newData.getMinPrice());
+        if (!productPriceList.isEmpty()) {
+            ProductPrice newData = productPriceList.get(productPriceList.size() - 1);
+            averagePriceList.add(newData.getAveragePrice().doubleValue());
+            minAveragePriceList.add(newData.getMinAveragePrice().doubleValue());
+            minPriceList.add(newData.getMinPrice().doubleValue());
             Calendar calendar = Calendar.getInstance(Locale.CHINA);
-            calendar.setTime(newData.getCreateDate());
+            calendar.setTime(newData.getCreateTime());
             labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         }
 

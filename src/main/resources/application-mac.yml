@@ -1,3 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    url: jdbc:mysql://192.168.13.157:3306/quickapi?characterEncoding=utf-8&useSSL=false
+  jpa:
+    show-sql: true
+
 constant:
   chromePath: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
   bmobAppId: 86855067edf9cf9d0132c02f2f7aed6e

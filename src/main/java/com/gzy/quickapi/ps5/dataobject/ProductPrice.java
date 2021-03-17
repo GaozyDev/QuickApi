@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-public class ProductPriceInfo {
+public class ProductPrice {
 
     @Id
     private String id;

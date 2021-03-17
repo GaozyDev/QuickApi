@@ -1,13 +1,13 @@
-package com.gzy.quickapi.ps5.data;
+package com.gzy.quickapi.ps5.dto;
 
 import java.util.Date;
 import java.util.List;
 
-public class PriceData {
+public class ProductPriceInfos {
 
     private Date updateDate;
 
-    private List<ProductData> productDataList;
+    private List<ProductPriceInfo> productPriceInfoList;
 
     private double averagePrice;
 
@@ -23,12 +23,12 @@ public class PriceData {
         this.updateDate = updateDate;
     }
 
-    public List<ProductData> getProductDataList() {
-        return productDataList;
+    public List<ProductPriceInfo> getProductDataList() {
+        return productPriceInfoList;
     }
 
-    public void setProductDataList(List<ProductData> productData) {
-        this.productDataList = productData;
+    public void setProductDataList(List<ProductPriceInfo> productData) {
+        this.productPriceInfoList = productData;
     }
 
     public double getMinAveragePrice() {
