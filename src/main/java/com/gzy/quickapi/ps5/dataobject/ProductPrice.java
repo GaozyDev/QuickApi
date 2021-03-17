@@ -13,11 +13,11 @@ public class ProductPrice {
 
     private String productId;
 
-    private BigDecimal averagePrice;
+    private double averagePrice;
 
-    private BigDecimal minAveragePrice;
+    private double minAveragePrice;
 
-    private BigDecimal minPrice;
+    private double minPrice;
 
     private Date createTime;
 
@@ -39,27 +39,27 @@ public class ProductPrice {
         this.productId = productId;
     }
 
-    public BigDecimal getAveragePrice() {
+    public double getAveragePrice() {
         return averagePrice;
     }
 
-    public void setAveragePrice(BigDecimal averagePrice) {
+    public void setAveragePrice(double averagePrice) {
         this.averagePrice = averagePrice;
     }
 
-    public BigDecimal getMinAveragePrice() {
+    public double getMinAveragePrice() {
         return minAveragePrice;
     }
 
-    public void setMinAveragePrice(BigDecimal minAveragePrice) {
+    public void setMinAveragePrice(double minAveragePrice) {
         this.minAveragePrice = minAveragePrice;
     }
 
-    public BigDecimal getMinPrice() {
+    public double getMinPrice() {
         return minPrice;
     }
 
-    public void setMinPrice(BigDecimal minPrice) {
+    public void setMinPrice(double minPrice) {
         this.minPrice = minPrice;
     }
 

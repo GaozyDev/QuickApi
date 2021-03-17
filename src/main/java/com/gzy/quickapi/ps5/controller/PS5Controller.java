@@ -1,7 +1,7 @@
 package com.gzy.quickapi.ps5.controller;
 
-import com.gzy.quickapi.ps5.dto.ProductPriceInfos;
 import com.gzy.quickapi.ps5.dataobject.ProductPrice;
+import com.gzy.quickapi.ps5.dto.ProductPriceInfos;
 import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
 import com.gzy.quickapi.ps5.service.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -77,36 +75,36 @@ public class PS5Controller {
 
         int dayStep = lastData.size() / 10 + 1;
 
-        BigDecimal averagePrice = new BigDecimal(BigInteger.ZERO);
-        BigDecimal minAveragePrice = new BigDecimal(BigInteger.ZERO);
-        BigDecimal minPrice = new BigDecimal(BigInteger.ZERO);
+        double averagePrice = 0;
+        double minAveragePrice = 0;
+        double minPrice = 0;
         Date date;
         for (int i = 0; i < lastData.size(); i++) {
             ProductPrice productPrice = lastData.get(i);
-            averagePrice = averagePrice.add(productPrice.getAveragePrice());
-            minAveragePrice = minAveragePrice.add(productPrice.getMinAveragePrice());
-            minPrice = minPrice.add(productPrice.getMinPrice());
+            averagePrice += productPrice.getAveragePrice();
+            minAveragePrice += productPrice.getMinAveragePrice();
+            minPrice += productPrice.getMinPrice();
             date = lastData.get(i).getCreateTime();
 
             if ((i + 1) % dayStep == 0) {
-                averagePriceList.add(averagePrice.doubleValue() / dayStep);
-                minAveragePriceList.add(minAveragePrice.doubleValue() / dayStep);
-                minPriceList.add(minPrice.doubleValue() / dayStep);
+                averagePriceList.add(averagePrice / dayStep);
+                minAveragePriceList.add(minAveragePrice / dayStep);
+                minPriceList.add(minPrice / dayStep);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
                 labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
 
-                averagePrice = new BigDecimal(BigInteger.ZERO);
-                minAveragePrice = new BigDecimal(BigInteger.ZERO);
-                minPrice = new BigDecimal(BigInteger.ZERO);
+                averagePrice = 0;
+                minAveragePrice = 0;
+                minPrice = 0;
             }
         }
 
         if (!productPriceList.isEmpty()) {
             ProductPrice newData = productPriceList.get(productPriceList.size() - 1);
-            averagePriceList.add(newData.getAveragePrice().doubleValue());
-            minAveragePriceList.add(newData.getMinAveragePrice().doubleValue());
-            minPriceList.add(newData.getMinPrice().doubleValue());
+            averagePriceList.add(newData.getAveragePrice());
+            minAveragePriceList.add(newData.getMinAveragePrice());
+            minPriceList.add(newData.getMinPrice());
             Calendar calendar = Calendar.getInstance(Locale.CHINA);
             calendar.setTime(newData.getCreateTime());
             labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));

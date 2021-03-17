@@ -63,9 +63,9 @@ public class PriceService {
 
         ProductPrice productPrice = new ProductPrice();
         productPrice.setId(KeyUtil.genUniqueKey());
-        productPrice.setAveragePrice(BigDecimal.valueOf(productPriceInfos.getAveragePrice()));
-        productPrice.setMinAveragePrice(BigDecimal.valueOf(productPriceInfos.getMinAveragePrice()));
-        productPrice.setMinPrice(BigDecimal.valueOf(productPriceInfos.getMinPrice()));
+        productPrice.setAveragePrice(productPriceInfos.getAveragePrice());
+        productPrice.setMinAveragePrice(productPriceInfos.getMinAveragePrice());
+        productPrice.setMinPrice(productPriceInfos.getMinPrice());
         productPrice.setProductId(String.valueOf(ps5TypeEnum.getTypeCode()));
         productPriceInfoRepository.save(productPrice);
 
