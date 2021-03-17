@@ -29,7 +29,7 @@ public class PriceService {
     // 数字版
     public static ProductPriceInfos digitalEditionProductPriceInfos;
 
-    public ProductPriceInfos getPS5ProductData(PS5TypeEnum ps5TypeEnum) {
+    public ProductPriceInfos getProductPriceInfos(PS5TypeEnum ps5TypeEnum) {
         String url;
         if (ps5TypeEnum == PS5TypeEnum.OPTICAL_DRIVE) {
             url = "https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1";
@@ -55,6 +55,7 @@ public class PriceService {
         productPrice.setMinAveragePrice(productPriceInfos.getMinAveragePrice());
         productPrice.setMinPrice(productPriceInfos.getMinPrice());
         productPrice.setProductId(String.valueOf(ps5TypeEnum.getTypeCode()));
+        productPrice.setCreateTime(new Date());
         productPriceInfoRepository.save(productPrice);
 
         return productPriceInfos;
@@ -78,7 +79,7 @@ public class PriceService {
         return minPrice;
     }
 
-    public List<ProductPrice> getPS5HistoryPrice(PS5TypeEnum ps5TypeEnum) {
+    public List<ProductPrice> getProductPriceList(PS5TypeEnum ps5TypeEnum) {
         return productPriceInfoRepository.findByProductId(String.valueOf(ps5TypeEnum.getTypeCode()));
     }
 }

@@ -28,12 +28,12 @@ public class PS5Controller {
         ProductPriceInfos priceDataInfos;
         if (opticalDrive) {
             if (PriceService.opticalDriveProductPriceInfos == null) {
-                PriceService.opticalDriveProductPriceInfos = priceService.getPS5ProductData(PS5TypeEnum.OPTICAL_DRIVE);
+                PriceService.opticalDriveProductPriceInfos = priceService.getProductPriceInfos(PS5TypeEnum.OPTICAL_DRIVE);
             }
             priceDataInfos = PriceService.opticalDriveProductPriceInfos;
         } else {
             if (PriceService.digitalEditionProductPriceInfos == null) {
-                PriceService.digitalEditionProductPriceInfos = priceService.getPS5ProductData(PS5TypeEnum.DIGITAL_EDITION);
+                PriceService.digitalEditionProductPriceInfos = priceService.getProductPriceInfos(PS5TypeEnum.DIGITAL_EDITION);
             }
             priceDataInfos = PriceService.digitalEditionProductPriceInfos;
         }
@@ -43,8 +43,8 @@ public class PS5Controller {
         String date = sdf.format(priceDataInfos.getUpdateDate());
         map.put("updateTime", date);
 
-        List<ProductPrice> productPriceData = priceService.getPS5HistoryPrice(opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE : PS5TypeEnum.DIGITAL_EDITION);
-        setChartData(map, productPriceData);
+        List<ProductPrice> productPriceList = priceService.getProductPriceList(opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE : PS5TypeEnum.DIGITAL_EDITION);
+        setChartData(map, productPriceList);
 
         return new ModelAndView("price/index", map);
     }

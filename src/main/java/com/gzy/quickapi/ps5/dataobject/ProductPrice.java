@@ -2,7 +2,6 @@ package com.gzy.quickapi.ps5.dataobject;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -20,8 +19,6 @@ public class ProductPrice {
     private double minPrice;
 
     private Date createTime;
-
-    private Date updateTime;
 
     public String getId() {
         return id;
@@ -69,13 +66,5 @@ public class ProductPrice {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
     }
 }
