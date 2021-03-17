@@ -8,8 +8,10 @@ import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
 import com.gzy.quickapi.ps5.repository.ProductPriceInfoRepository;
 import com.gzy.quickapi.ps5.utils.KeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Path;
 import java.util.Date;
 import java.util.List;
 import java.util.OptionalDouble;
@@ -80,6 +82,11 @@ public class PriceService {
     }
 
     public List<ProductPrice> getProductPriceList(PS5TypeEnum ps5TypeEnum) {
-        return productPriceInfoRepository.findByProductId(String.valueOf(ps5TypeEnum.getTypeCode()));
+        return productPriceInfoRepository.findAll((Specification<ProductPrice>) (root, query, criteriaBuilder) -> {
+            Path<String> productId = root.get("productId");
+            query.where(criteriaBuilder.equal(productId, String.valueOf(ps5TypeEnum.getTypeCode())))
+                    .orderBy(criteriaBuilder.asc(root.get("createTime")));
+            return query.getRestriction();
+        });
     }
 }

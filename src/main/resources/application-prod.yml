@@ -1,3 +1,12 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: raspberry
+    url: jdbc:mysql://192.168.31.138:3306/quickapi?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+  jpa:
+    show-sql: false
+
 constant:
   chromePath: /usr/bin/chromium-browser
   bmobAppId: 99f509d6b7172a5793738a41f819b98e

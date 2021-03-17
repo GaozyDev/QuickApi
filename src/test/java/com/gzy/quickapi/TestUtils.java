@@ -3,7 +3,6 @@ package com.gzy.quickapi;
 import com.gzy.quickapi.dataimport.PriceBmob;
 import com.gzy.quickapi.dataimport.QueryBmobResults;
 import com.gzy.quickapi.ps5.dataobject.ProductPrice;
-import com.gzy.quickapi.ps5.dto.ProductPriceInfo;
 import com.gzy.quickapi.ps5.repository.ProductPriceInfoRepository;
 import com.gzy.quickapi.ps5.utils.KeyUtil;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ public class TestUtils {
     private ProductPriceInfoRepository repository;
 
     @Test
-    public void saveTest() {
+    public void importData() {
 
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
@@ -52,5 +51,17 @@ public class TestUtils {
         }
 
         List<ProductPrice> result = repository.saveAll(prices);
+    }
+
+    @Test
+    public void saveTest() {
+        ProductPrice productPrice = new ProductPrice();
+        productPrice.setId(KeyUtil.genUniqueKey());
+        productPrice.setAveragePrice(2000);
+        productPrice.setMinAveragePrice(2000);
+        productPrice.setMinPrice(2000);
+        productPrice.setProductId("456");
+        productPrice.setCreateTime(new Date());
+        repository.save(productPrice);
     }
 }
