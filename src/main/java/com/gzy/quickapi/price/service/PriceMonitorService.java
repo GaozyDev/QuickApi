@@ -32,7 +32,7 @@ public class PriceMonitorService {
     public static AveragePriceInfo digitalEditionAveragePriceInfo;
 
     public AveragePriceInfo getProductPriceInfos(ProductIdEnum productIdEnum) {
-        String url= productIdEnum.getUrl();
+        String url = productIdEnum.getUrl();
 
         List<ProductPriceInfo> productPriceInfoList = webCrawler.startWebCrawler(url);
 
@@ -51,7 +51,7 @@ public class PriceMonitorService {
         productPrice.setAveragePrice(averagePriceInfo.getAveragePrice());
         productPrice.setMinAveragePrice(averagePriceInfo.getMinAveragePrice());
         productPrice.setMinPrice(averagePriceInfo.getMinPrice());
-        productPrice.setProductId(String.valueOf(productIdEnum.getProductId()));
+        productPrice.setProductId(productIdEnum.getProductId());
         productPrice.setCreateTime(new Date());
         productPriceInfoRepository.save(productPrice);
 
@@ -79,7 +79,7 @@ public class PriceMonitorService {
     public List<ProductPrice> getProductPriceList(ProductIdEnum productIdEnum) {
         return productPriceInfoRepository.findAll((Specification<ProductPrice>) (root, query, criteriaBuilder) -> {
             Path<String> productId = root.get("productId");
-            query.where(criteriaBuilder.equal(productId, String.valueOf(productIdEnum.getProductId())))
+            query.where(criteriaBuilder.equal(productId, productIdEnum.getProductId()))
                     .orderBy(criteriaBuilder.asc(root.get("createTime")));
             return query.getRestriction();
         });
