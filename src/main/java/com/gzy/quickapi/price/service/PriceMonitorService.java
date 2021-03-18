@@ -3,7 +3,7 @@ package com.gzy.quickapi.price.service;
 import com.gzy.quickapi.price.crawler.WebCrawler;
 import com.gzy.quickapi.price.dataobject.ProductPrice;
 import com.gzy.quickapi.price.dto.ProductPriceInfo;
-import com.gzy.quickapi.price.dto.ProductPriceInfos;
+import com.gzy.quickapi.price.dto.AveragePriceInfo;
 import com.gzy.quickapi.price.enums.ProductIdEnum;
 import com.gzy.quickapi.price.repository.ProductPriceInfoRepository;
 import com.gzy.quickapi.price.utils.KeyUtil;
@@ -26,41 +26,36 @@ public class PriceMonitorService {
     private ProductPriceInfoRepository productPriceInfoRepository;
 
     // 光驱版
-    public static ProductPriceInfos opticalDriveProductPriceInfos;
+    public static AveragePriceInfo opticalDriveAveragePriceInfo;
 
     // 数字版
-    public static ProductPriceInfos digitalEditionProductPriceInfos;
+    public static AveragePriceInfo digitalEditionAveragePriceInfo;
 
-    public ProductPriceInfos getProductPriceInfos(ProductIdEnum productIdEnum) {
-        String url;
-        if (productIdEnum == ProductIdEnum.PS5_OPTICAL_DRIVE) {
-            url = "https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1";
-        } else {
-            url = "https://search.smzdm.com/?c=home&s=ps5%E6%95%B0%E5%AD%97%E7%89%88&brand_id=249&min_price=3000&max_price=5000&v=b&p=1";
-        }
+    public AveragePriceInfo getProductPriceInfos(ProductIdEnum productIdEnum) {
+        String url= productIdEnum.getUrl();
 
         List<ProductPriceInfo> productPriceInfoList = webCrawler.startWebCrawler(url);
 
-        ProductPriceInfos productPriceInfos = new ProductPriceInfos();
-        productPriceInfos.setUpdateDate(new Date());
-        productPriceInfos.setProductDataList(productPriceInfoList);
+        AveragePriceInfo averagePriceInfo = new AveragePriceInfo();
+        averagePriceInfo.setUpdateDate(new Date());
+        averagePriceInfo.setProductDataList(productPriceInfoList);
         double averagePrice = calAveragePrice(productPriceInfoList);
         double minAveragePrice = calAveragePrice(productPriceInfoList.subList(0, productPriceInfoList.size() / 5));
         double minPrice = calMinPrice(productPriceInfoList);
-        productPriceInfos.setAveragePrice(averagePrice);
-        productPriceInfos.setMinAveragePrice(minAveragePrice);
-        productPriceInfos.setMinPrice(minPrice);
+        averagePriceInfo.setAveragePrice(averagePrice);
+        averagePriceInfo.setMinAveragePrice(minAveragePrice);
+        averagePriceInfo.setMinPrice(minPrice);
 
         ProductPrice productPrice = new ProductPrice();
         productPrice.setId(KeyUtil.genUniqueKey());
-        productPrice.setAveragePrice(productPriceInfos.getAveragePrice());
-        productPrice.setMinAveragePrice(productPriceInfos.getMinAveragePrice());
-        productPrice.setMinPrice(productPriceInfos.getMinPrice());
+        productPrice.setAveragePrice(averagePriceInfo.getAveragePrice());
+        productPrice.setMinAveragePrice(averagePriceInfo.getMinAveragePrice());
+        productPrice.setMinPrice(averagePriceInfo.getMinPrice());
         productPrice.setProductId(String.valueOf(productIdEnum.getProductId()));
         productPrice.setCreateTime(new Date());
         productPriceInfoRepository.save(productPrice);
 
-        return productPriceInfos;
+        return averagePriceInfo;
     }
 
     private double calAveragePrice(List<ProductPriceInfo> productPriceInfoList) {

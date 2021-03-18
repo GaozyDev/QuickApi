@@ -3,7 +3,7 @@ package com.gzy.quickapi.price.dto;
 import java.util.Date;
 import java.util.List;
 
-public class ProductPriceInfos {
+public class AveragePriceInfo {
 
     private Date updateDate;
 

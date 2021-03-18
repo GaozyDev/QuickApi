@@ -1,7 +1,7 @@
 package com.gzy.quickapi.price.controller;
 
 import com.gzy.quickapi.price.dataobject.ProductPrice;
-import com.gzy.quickapi.price.dto.ProductPriceInfos;
+import com.gzy.quickapi.price.dto.AveragePriceInfo;
 import com.gzy.quickapi.price.enums.ProductIdEnum;
 import com.gzy.quickapi.price.service.PriceMonitorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,17 @@ public class PriceMonitorController {
     public ModelAndView ps5Price(@RequestParam(name = "opticalDrive", defaultValue = "true") boolean opticalDrive,
                                  Map<String, Object> map) {
         map.put("title", opticalDrive ? ProductIdEnum.PS5_OPTICAL_DRIVE.getProductName() : ProductIdEnum.PS5_DIGITAL_EDITION.getProductName());
-        ProductPriceInfos priceDataInfos;
+        AveragePriceInfo priceDataInfos;
         if (opticalDrive) {
-            if (PriceMonitorService.opticalDriveProductPriceInfos == null) {
-                PriceMonitorService.opticalDriveProductPriceInfos = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
+            if (PriceMonitorService.opticalDriveAveragePriceInfo == null) {
+                PriceMonitorService.opticalDriveAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
             }
-            priceDataInfos = PriceMonitorService.opticalDriveProductPriceInfos;
+            priceDataInfos = PriceMonitorService.opticalDriveAveragePriceInfo;
         } else {
-            if (PriceMonitorService.digitalEditionProductPriceInfos == null) {
-                PriceMonitorService.digitalEditionProductPriceInfos = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_DIGITAL_EDITION);
+            if (PriceMonitorService.digitalEditionAveragePriceInfo == null) {
+                PriceMonitorService.digitalEditionAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_DIGITAL_EDITION);
             }
-            priceDataInfos = PriceMonitorService.digitalEditionProductPriceInfos;
+            priceDataInfos = PriceMonitorService.digitalEditionAveragePriceInfo;
         }
 
         map.put("resultData", priceDataInfos);

@@ -23,7 +23,7 @@ public class ScheduleTask {
     @Scheduled(cron = "0 0 0/3 * * ?")
     private void configureTasks() {
         logger.info("定时爬虫：" + new Date());
-        PriceMonitorService.opticalDriveProductPriceInfos = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
-        PriceMonitorService.digitalEditionProductPriceInfos = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_DIGITAL_EDITION);
+        PriceMonitorService.opticalDriveAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
+        PriceMonitorService.digitalEditionAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_DIGITAL_EDITION);
     }
 }
