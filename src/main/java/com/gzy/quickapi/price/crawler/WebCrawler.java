@@ -1,8 +1,7 @@
-package com.gzy.quickapi.ps5.crawler;
+package com.gzy.quickapi.price.crawler;
 
 import com.gzy.quickapi.Constant;
-import com.gzy.quickapi.ps5.dto.ProductPriceInfo;
-import com.gzy.quickapi.ps5.service.PriceService;
+import com.gzy.quickapi.price.dto.ProductPriceInfo;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
 import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;

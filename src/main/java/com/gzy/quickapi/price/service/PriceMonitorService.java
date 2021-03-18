@@ -1,12 +1,12 @@
-package com.gzy.quickapi.ps5.service;
+package com.gzy.quickapi.price.service;
 
-import com.gzy.quickapi.ps5.crawler.WebCrawler;
-import com.gzy.quickapi.ps5.dataobject.ProductPrice;
-import com.gzy.quickapi.ps5.dto.ProductPriceInfo;
-import com.gzy.quickapi.ps5.dto.ProductPriceInfos;
-import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
-import com.gzy.quickapi.ps5.repository.ProductPriceInfoRepository;
-import com.gzy.quickapi.ps5.utils.KeyUtil;
+import com.gzy.quickapi.price.crawler.WebCrawler;
+import com.gzy.quickapi.price.dataobject.ProductPrice;
+import com.gzy.quickapi.price.dto.ProductPriceInfo;
+import com.gzy.quickapi.price.dto.ProductPriceInfos;
+import com.gzy.quickapi.price.enums.ProductIdEnum;
+import com.gzy.quickapi.price.repository.ProductPriceInfoRepository;
+import com.gzy.quickapi.price.utils.KeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.OptionalDouble;
 
 @Service
-public class PriceService {
+public class PriceMonitorService {
 
     @Autowired
     private WebCrawler webCrawler;
@@ -31,9 +31,9 @@ public class PriceService {
     // 数字版
     public static ProductPriceInfos digitalEditionProductPriceInfos;
 
-    public ProductPriceInfos getProductPriceInfos(PS5TypeEnum ps5TypeEnum) {
+    public ProductPriceInfos getProductPriceInfos(ProductIdEnum productIdEnum) {
         String url;
-        if (ps5TypeEnum == PS5TypeEnum.OPTICAL_DRIVE) {
+        if (productIdEnum == ProductIdEnum.PS5_OPTICAL_DRIVE) {
             url = "https://search.smzdm.com/?c=home&s=ps5%E5%85%89%E9%A9%B1%E7%89%88&brand_id=249&min_price=3500&max_price=5500&v=b&p=1";
         } else {
             url = "https://search.smzdm.com/?c=home&s=ps5%E6%95%B0%E5%AD%97%E7%89%88&brand_id=249&min_price=3000&max_price=5000&v=b&p=1";
@@ -56,7 +56,7 @@ public class PriceService {
         productPrice.setAveragePrice(productPriceInfos.getAveragePrice());
         productPrice.setMinAveragePrice(productPriceInfos.getMinAveragePrice());
         productPrice.setMinPrice(productPriceInfos.getMinPrice());
-        productPrice.setProductId(String.valueOf(ps5TypeEnum.getTypeCode()));
+        productPrice.setProductId(String.valueOf(productIdEnum.getProductId()));
         productPrice.setCreateTime(new Date());
         productPriceInfoRepository.save(productPrice);
 
@@ -81,10 +81,10 @@ public class PriceService {
         return minPrice;
     }
 
-    public List<ProductPrice> getProductPriceList(PS5TypeEnum ps5TypeEnum) {
+    public List<ProductPrice> getProductPriceList(ProductIdEnum productIdEnum) {
         return productPriceInfoRepository.findAll((Specification<ProductPrice>) (root, query, criteriaBuilder) -> {
             Path<String> productId = root.get("productId");
-            query.where(criteriaBuilder.equal(productId, String.valueOf(ps5TypeEnum.getTypeCode())))
+            query.where(criteriaBuilder.equal(productId, String.valueOf(productIdEnum.getProductId())))
                     .orderBy(criteriaBuilder.asc(root.get("createTime")));
             return query.getRestriction();
         });

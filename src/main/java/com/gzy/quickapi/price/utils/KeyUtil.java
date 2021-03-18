@@ -1,4 +1,4 @@
-package com.gzy.quickapi.ps5.utils;
+package com.gzy.quickapi.price.utils;
 
 import java.util.Random;
 

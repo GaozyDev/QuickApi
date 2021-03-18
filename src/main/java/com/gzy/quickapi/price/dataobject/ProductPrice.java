@@ -1,4 +1,4 @@
-package com.gzy.quickapi.ps5.dataobject;
+package com.gzy.quickapi.price.dataobject;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

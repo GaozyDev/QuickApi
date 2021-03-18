@@ -1,7 +1,7 @@
-package com.gzy.quickapi.ps5.task;
+package com.gzy.quickapi.price.task;
 
-import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
-import com.gzy.quickapi.ps5.service.PriceService;
+import com.gzy.quickapi.price.enums.ProductIdEnum;
+import com.gzy.quickapi.price.service.PriceMonitorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +16,14 @@ import java.util.Date;
 public class ScheduleTask {
 
     @Autowired
-    PriceService priceService;
+    PriceMonitorService priceMonitorService;
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduleTask.class.getName());
 
-    @Scheduled(cron = "0 0 0/2 * * ?")
+    @Scheduled(cron = "0 0 0/3 * * ?")
     private void configureTasks() {
         logger.info("定时爬虫：" + new Date());
-        PriceService.opticalDriveProductPriceInfos = priceService.getProductPriceInfos(PS5TypeEnum.OPTICAL_DRIVE);
-        PriceService.digitalEditionProductPriceInfos = priceService.getProductPriceInfos(PS5TypeEnum.DIGITAL_EDITION);
+        PriceMonitorService.opticalDriveProductPriceInfos = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
+        PriceMonitorService.digitalEditionProductPriceInfos = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_DIGITAL_EDITION);
     }
 }

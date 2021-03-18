@@ -1,9 +1,9 @@
-package com.gzy.quickapi.ps5.controller;
+package com.gzy.quickapi.price.controller;
 
-import com.gzy.quickapi.ps5.dataobject.ProductPrice;
-import com.gzy.quickapi.ps5.dto.ProductPriceInfos;
-import com.gzy.quickapi.ps5.enums.PS5TypeEnum;
-import com.gzy.quickapi.ps5.service.PriceService;
+import com.gzy.quickapi.price.dataobject.ProductPrice;
+import com.gzy.quickapi.price.dto.ProductPriceInfos;
+import com.gzy.quickapi.price.enums.ProductIdEnum;
+import com.gzy.quickapi.price.service.PriceMonitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,26 +16,26 @@ import java.util.*;
 
 @Controller
 @RequestMapping
-public class PS5Controller {
+public class PriceMonitorController {
 
     @Autowired
-    private PriceService priceService;
+    private PriceMonitorService priceMonitorService;
 
     @GetMapping("/ps5")
     public ModelAndView ps5Price(@RequestParam(name = "opticalDrive", defaultValue = "true") boolean opticalDrive,
                                  Map<String, Object> map) {
-        map.put("title", opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE.getTypeName() : PS5TypeEnum.DIGITAL_EDITION.getTypeName());
+        map.put("title", opticalDrive ? ProductIdEnum.PS5_OPTICAL_DRIVE.getProductName() : ProductIdEnum.PS5_DIGITAL_EDITION.getProductName());
         ProductPriceInfos priceDataInfos;
         if (opticalDrive) {
-            if (PriceService.opticalDriveProductPriceInfos == null) {
-                PriceService.opticalDriveProductPriceInfos = priceService.getProductPriceInfos(PS5TypeEnum.OPTICAL_DRIVE);
+            if (PriceMonitorService.opticalDriveProductPriceInfos == null) {
+                PriceMonitorService.opticalDriveProductPriceInfos = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
             }
-            priceDataInfos = PriceService.opticalDriveProductPriceInfos;
+            priceDataInfos = PriceMonitorService.opticalDriveProductPriceInfos;
         } else {
-            if (PriceService.digitalEditionProductPriceInfos == null) {
-                PriceService.digitalEditionProductPriceInfos = priceService.getProductPriceInfos(PS5TypeEnum.DIGITAL_EDITION);
+            if (PriceMonitorService.digitalEditionProductPriceInfos == null) {
+                PriceMonitorService.digitalEditionProductPriceInfos = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_DIGITAL_EDITION);
             }
-            priceDataInfos = PriceService.digitalEditionProductPriceInfos;
+            priceDataInfos = PriceMonitorService.digitalEditionProductPriceInfos;
         }
 
         map.put("resultData", priceDataInfos);
@@ -43,7 +43,7 @@ public class PS5Controller {
         String date = sdf.format(priceDataInfos.getUpdateDate());
         map.put("updateTime", date);
 
-        List<ProductPrice> productPriceList = priceService.getProductPriceList(opticalDrive ? PS5TypeEnum.OPTICAL_DRIVE : PS5TypeEnum.DIGITAL_EDITION);
+        List<ProductPrice> productPriceList = priceMonitorService.getProductPriceList(opticalDrive ? ProductIdEnum.PS5_OPTICAL_DRIVE : ProductIdEnum.PS5_DIGITAL_EDITION);
         setChartData(map, productPriceList);
 
         return new ModelAndView("price/index", map);

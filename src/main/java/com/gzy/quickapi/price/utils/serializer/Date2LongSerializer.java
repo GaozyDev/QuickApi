@@ -1,4 +1,4 @@
-package com.gzy.quickapi.ps5.utils.serializer;
+package com.gzy.quickapi.price.utils.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

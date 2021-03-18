@@ -1,4 +1,4 @@
-package com.gzy.quickapi.ps5.dto;
+package com.gzy.quickapi.price.dto;
 
 public class ProductPriceInfo {
 

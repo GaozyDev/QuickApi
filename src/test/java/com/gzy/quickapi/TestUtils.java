@@ -2,9 +2,9 @@ package com.gzy.quickapi;
 
 import com.gzy.quickapi.dataimport.PriceBmob;
 import com.gzy.quickapi.dataimport.QueryBmobResults;
-import com.gzy.quickapi.ps5.dataobject.ProductPrice;
-import com.gzy.quickapi.ps5.repository.ProductPriceInfoRepository;
-import com.gzy.quickapi.ps5.utils.KeyUtil;
+import com.gzy.quickapi.price.dataobject.ProductPrice;
+import com.gzy.quickapi.price.repository.ProductPriceInfoRepository;
+import com.gzy.quickapi.price.utils.KeyUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
