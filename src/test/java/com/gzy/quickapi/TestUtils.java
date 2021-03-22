@@ -55,13 +55,20 @@ public class TestUtils {
 
     @Test
     public void saveTest() {
-        ProductPrice productPrice = new ProductPrice();
-        productPrice.setId(KeyUtil.genUniqueKey());
-        productPrice.setAveragePrice(2000);
-        productPrice.setMinAveragePrice(2000);
-        productPrice.setMinPrice(2000);
-        productPrice.setProductId("456");
-        productPrice.setCreateTime(new Date());
-        repository.save(productPrice);
+        List<ProductPrice> productPriceList = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+            ProductPrice productPrice = new ProductPrice();
+            productPrice.setId(KeyUtil.genUniqueKey());
+            productPrice.setAveragePrice(2000);
+            productPrice.setMinAveragePrice(2000);
+            productPrice.setMinPrice(2000);
+            productPrice.setProductId("123");
+            productPrice.setCreateTime(new Date());
+            productPriceList.add(productPrice);
+        }
+
+        long time = System.currentTimeMillis();
+        repository.saveAll(productPriceList);
+        System.out.println("end: " + (System.currentTimeMillis() - time));
     }
 }
