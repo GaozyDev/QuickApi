@@ -138,7 +138,7 @@
         </#list>
 
         <#list opticalDriveLabelList as label>
-        labelArray.push(${label});
+        labelArray.push("${label}");
         </#list>
 
         var ctx1 = document.getElementById('chart-1').getContext('2d');
@@ -190,7 +190,7 @@
         </#list>
 
         <#list digitalEditionLabelList as label>
-        digitalEditionLabelArray.push(${label});
+        digitalEditionLabelArray.push("${label}");
         </#list>
 
         var ctx2 = document.getElementById('chart-2').getContext('2d');

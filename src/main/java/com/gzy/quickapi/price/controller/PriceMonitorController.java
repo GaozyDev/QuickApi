@@ -86,9 +86,9 @@ public class PriceMonitorController {
                 averagePriceList.add(averagePrice / dayStep);
                 minAveragePriceList.add(minAveragePrice / dayStep);
                 minPriceList.add(minPrice / dayStep);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
-                labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+                String dateString = sdf.format(date);
+                labelList.add(dateString);
 
                 averagePrice = 0;
                 minAveragePrice = 0;
@@ -101,9 +101,9 @@ public class PriceMonitorController {
             averagePriceList.add(newData.getAveragePrice());
             minAveragePriceList.add(newData.getMinAveragePrice());
             minPriceList.add(newData.getMinPrice());
-            Calendar calendar = Calendar.getInstance(Locale.CHINA);
-            calendar.setTime(newData.getCreateTime());
-            labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+            String dateString = sdf.format(PriceMonitorService.opticalDriveAveragePriceInfo.getUpdateDate());
+            labelList.add(dateString);
         }
 
         map.put(key + "AveragePriceList", averagePriceList);
