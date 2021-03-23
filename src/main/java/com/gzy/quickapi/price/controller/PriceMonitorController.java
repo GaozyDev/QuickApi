@@ -22,34 +22,30 @@ public class PriceMonitorController {
     private PriceMonitorService priceMonitorService;
 
     @GetMapping("/ps5")
-    public ModelAndView ps5Price(@RequestParam(name = "opticalDrive", defaultValue = "true") boolean opticalDrive,
-                                 Map<String, Object> map) {
-        map.put("title", opticalDrive ? ProductIdEnum.PS5_OPTICAL_DRIVE.getProductName() : ProductIdEnum.PS5_DIGITAL_EDITION.getProductName());
-        AveragePriceInfo priceDataInfos;
-        if (opticalDrive) {
-            if (PriceMonitorService.opticalDriveAveragePriceInfo == null) {
-                PriceMonitorService.opticalDriveAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
-            }
-            priceDataInfos = PriceMonitorService.opticalDriveAveragePriceInfo;
-        } else {
-            if (PriceMonitorService.digitalEditionAveragePriceInfo == null) {
-                PriceMonitorService.digitalEditionAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_DIGITAL_EDITION);
-            }
-            priceDataInfos = PriceMonitorService.digitalEditionAveragePriceInfo;
+    public ModelAndView ps5Price(Map<String, Object> map) {
+        if (PriceMonitorService.opticalDriveAveragePriceInfo == null) {
+            PriceMonitorService.opticalDriveAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
+        }
+        if (PriceMonitorService.digitalEditionAveragePriceInfo == null) {
+            PriceMonitorService.digitalEditionAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_DIGITAL_EDITION);
         }
 
-        map.put("resultData", priceDataInfos);
+        map.put("opticalDriveResultData", PriceMonitorService.opticalDriveAveragePriceInfo);
+        map.put("digitalEditionResultData", PriceMonitorService.digitalEditionAveragePriceInfo);
+
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String date = sdf.format(priceDataInfos.getUpdateDate());
+        String date = sdf.format(PriceMonitorService.opticalDriveAveragePriceInfo.getUpdateDate());
         map.put("updateTime", date);
 
-        List<ProductPrice> productPriceList = priceMonitorService.getProductPriceList(opticalDrive ? ProductIdEnum.PS5_OPTICAL_DRIVE : ProductIdEnum.PS5_DIGITAL_EDITION);
-        setChartData(map, productPriceList);
+        List<ProductPrice> opticalDrivePriceList = priceMonitorService.getProductPriceList(ProductIdEnum.PS5_OPTICAL_DRIVE);
+        List<ProductPrice> digitalEditionPriceList = priceMonitorService.getProductPriceList(ProductIdEnum.PS5_DIGITAL_EDITION);
+        setChartData(map, "opticalDrive", opticalDrivePriceList);
+        setChartData(map, "digitalEdition", digitalEditionPriceList);
 
         return new ModelAndView("price/index", map);
     }
 
-    private void setChartData(Map<String, Object> map, List<ProductPrice> productPriceList) {
+    private void setChartData(Map<String, Object> map, String key, List<ProductPrice> productPriceList) {
         List<Double> averagePriceList = new ArrayList<>();
         List<Double> minAveragePriceList = new ArrayList<>();
         List<Double> minPriceList = new ArrayList<>();
@@ -110,9 +106,9 @@ public class PriceMonitorController {
             labelList.add(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         }
 
-        map.put("averagePriceList", averagePriceList);
-        map.put("minAveragePriceList", minAveragePriceList);
-        map.put("minPriceList", minPriceList);
-        map.put("labelList", labelList);
+        map.put(key + "AveragePriceList", averagePriceList);
+        map.put(key + "MinAveragePriceList", minAveragePriceList);
+        map.put(key + "MinPriceList", minPriceList);
+        map.put(key + "LabelList", labelList);
     }
 }
