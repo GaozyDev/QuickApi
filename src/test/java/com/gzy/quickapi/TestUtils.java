@@ -30,7 +30,7 @@ public class TestUtils {
 
         String url = "https://api2.bmob.cn/1/classes/PS5Price";
         RestTemplate restTemplate = new RestTemplate();
-        String where = "{\"type\":" + 0 + "}&order=createDate&limit=500";
+        String where = "{\"type\":" + 1 + "}&order=createDate&limit=500";
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url).queryParam("where", where);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Bmob-Application-Id", "99f509d6b7172a5793738a41f819b98e");
@@ -50,7 +50,7 @@ public class TestUtils {
             prices.add(productPrice);
         }
 
-        List<ProductPrice> result = repository.saveAll(prices);
+//        List<ProductPrice> result = repository.saveAll(prices);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class TestUtils {
         }
 
         long time = System.currentTimeMillis();
-        repository.saveAll(productPriceList);
+//        repository.saveAll(productPriceList);
         System.out.println("end: " + (System.currentTimeMillis() - time));
     }
 }
