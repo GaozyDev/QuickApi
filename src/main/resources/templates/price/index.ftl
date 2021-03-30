@@ -21,7 +21,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
-    <script data-ad-client="ca-pub-4701531989091472" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script data-ad-client="ca-pub-2952434340332926" async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 <body>
 <div>
@@ -41,10 +42,11 @@
                             光驱版
                         </h4>
                         <h4>
-                            均价：${opticalDriveResultData.averagePrice}元 &nbsp; 最低价：${opticalDriveResultData.minPrice}元
+                            最低均价：${opticalResultData.minAveragePrice}元
+                            <span class="price-change">&nbsp;${opticalChartData.priceChange}元</span>
                         </h4>
                         <h5>
-                            取市场20%低价计算均价：${opticalDriveResultData.minAveragePrice}元
+                            均价：${opticalResultData.averagePrice}元 &nbsp; 最低价：${opticalResultData.minPrice}元
                         </h5>
                     </div>
                     <div class="price-desc">
@@ -52,11 +54,11 @@
                             数字版
                         </h4>
                         <h4>
-                            均价：${digitalEditionResultData.averagePrice}元 &nbsp; 最低价：${digitalEditionResultData.minPrice}
-                            元
+                            最低均价：${digitalResultData.minAveragePrice}元
+                            <span class="price-change">&nbsp;${digitalChartData.priceChange}元</span>
                         </h4>
                         <h5>
-                            取市场20%低价计算均价：${digitalEditionResultData.minAveragePrice}元
+                            均价：${digitalResultData.averagePrice}元 &nbsp; 最低价：${digitalResultData.minPrice}元
                         </h5>
                     </div>
                 </div>
@@ -77,7 +79,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <#list opticalDriveResultData.productDataList as productData>
+                    <#list opticalResultData.productDataList as productData>
                         <tr>
                             <td>${productData.title}</td>
                             <td>${productData.price}</td>
@@ -95,7 +97,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <#list digitalEditionResultData.productDataList as productData>
+                    <#list digitalResultData.productDataList as productData>
                         <tr>
                             <td>${productData.title}</td>
                             <td>${productData.price}</td>
@@ -115,57 +117,57 @@
 <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
 <script>
-    const averagePriceArray = [];
-    const minAveragePriceArray = [];
-    const minPriceArray = [];
-    const labelArray = [];
+    const opticalAveragePriceArray = [];
+    const opticalMinAveragePriceArray = [];
+    const opticalMinPriceArray = [];
+    const opticalLabelArray = [];
 
-    const digitalEditionAveragePriceArray = [];
-    const digitalEditionMinAveragePriceArray = [];
-    const digitalEditionMinPriceArray = [];
-    const digitalEditionLabelArray = [];
+    const digitalAveragePriceArray = [];
+    const digitalMinAveragePriceArray = [];
+    const digitalMinPriceArray = [];
+    const digitalLabelArray = [];
 
     $(document).ready(function () {
 
-        <#list opticalDriveAveragePriceList as price>
-        averagePriceArray.push(${price});
+        <#list opticalChartData.averagePriceList as price>
+        opticalAveragePriceArray.push(${price});
         </#list>
 
-        <#list opticalDriveMinAveragePriceList as price>
-        minAveragePriceArray.push(${price});
+        <#list opticalChartData.minAveragePriceList as price>
+        opticalMinAveragePriceArray.push(${price});
         </#list>
 
-        <#list opticalDriveMinPriceList as price>
-        minPriceArray.push(${price});
+        <#list opticalChartData.minPriceList as price>
+        opticalMinPriceArray.push(${price});
         </#list>
 
-        <#list opticalDriveLabelList as label>
-        labelArray.push("${label}");
+        <#list opticalChartData.labelList as label>
+        opticalLabelArray.push("${label}");
         </#list>
 
         var ctx1 = document.getElementById('chart-1').getContext('2d');
         const chart1 = new Chart(ctx1, {
             type: 'line',
             data: {
-                labels: labelArray,
+                labels: opticalLabelArray,
                 datasets: [{
                     label: "均价",
                     fill: false,
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
-                    data: averagePriceArray
+                    data: opticalAveragePriceArray
                 }, {
                     label: "取市场20%低价计算均价",
                     fill: false,
                     backgroundColor: 'rgb(0, 152, 288)',
                     borderColor: 'rgb(0, 152, 288)',
-                    data: minAveragePriceArray
+                    data: opticalMinAveragePriceArray
                 }, {
                     label: "最低价",
                     fill: false,
                     backgroundColor: 'rgb(38, 184, 183)',
                     borderColor: 'rgb(38, 184, 183)',
-                    data: minPriceArray
+                    data: opticalMinPriceArray
                 }]
             },
             options: {
@@ -179,45 +181,45 @@
             }
         });
 
-        <#list digitalEditionAveragePriceList as price>
-        digitalEditionAveragePriceArray.push(${price});
+        <#list digitalChartData.averagePriceList as price>
+        digitalAveragePriceArray.push(${price});
         </#list>
 
-        <#list digitalEditionMinAveragePriceList as price>
-        digitalEditionMinAveragePriceArray.push(${price});
+        <#list digitalChartData.minAveragePriceList as price>
+        digitalMinAveragePriceArray.push(${price});
         </#list>
 
-        <#list digitalEditionMinPriceList as price>
-        digitalEditionMinPriceArray.push(${price});
+        <#list digitalChartData.minPriceList as price>
+        digitalMinPriceArray.push(${price});
         </#list>
 
-        <#list digitalEditionLabelList as label>
-        digitalEditionLabelArray.push("${label}");
+        <#list digitalChartData.labelList as label>
+        digitalLabelArray.push("${label}");
         </#list>
 
         var ctx2 = document.getElementById('chart-2').getContext('2d');
         const chart2 = new Chart(ctx2, {
             type: 'line',
             data: {
-                labels: digitalEditionLabelArray,
+                labels: digitalLabelArray,
                 datasets: [{
                     label: "均价",
                     fill: false,
                     backgroundColor: 'rgb(255, 99, 132)',
                     borderColor: 'rgb(255, 99, 132)',
-                    data: digitalEditionAveragePriceArray
+                    data: digitalAveragePriceArray
                 }, {
                     label: "取市场20%低价计算均价",
                     fill: false,
                     backgroundColor: 'rgb(0, 152, 288)',
                     borderColor: 'rgb(0, 152, 288)',
-                    data: digitalEditionMinAveragePriceArray
+                    data: digitalMinAveragePriceArray
                 }, {
                     label: "最低价",
                     fill: false,
                     backgroundColor: 'rgb(38, 184, 183)',
                     borderColor: 'rgb(38, 184, 183)',
-                    data: digitalEditionMinPriceArray
+                    data: digitalMinPriceArray
                 }]
             },
             options: {

@@ -29,6 +29,11 @@
     display: block;
 }
 
+.price-change {
+    color: red;
+    font-size: 14px;
+}
+
 .chart-wrapper {
     margin-top: 20px;
     display: flex;
