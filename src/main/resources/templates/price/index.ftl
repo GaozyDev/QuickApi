@@ -43,7 +43,11 @@
                         </h4>
                         <h4>
                             最低均价：${opticalResultData.minAveragePrice}元
-                            <span class="price-change">&nbsp;${opticalChartData.priceChange}元</span>
+                            <#if opticalChartData.priceChange gt 0>
+                                <span class="price-change-red">&nbsp;+${opticalChartData.priceChange}元</span>
+                            <#else>
+                                <span class="price-change-green">&nbsp;${opticalChartData.priceChange}元</span>
+                            </#if>
                         </h4>
                         <h5>
                             均价：${opticalResultData.averagePrice}元 &nbsp; 最低价：${opticalResultData.minPrice}元
@@ -55,7 +59,11 @@
                         </h4>
                         <h4>
                             最低均价：${digitalResultData.minAveragePrice}元
-                            <span class="price-change">&nbsp;${digitalChartData.priceChange}元</span>
+                            <#if digitalChartData.priceChange gt 0>
+                                <span class="price-change-red">&nbsp;+${digitalChartData.priceChange}元</span>
+                            <#else>
+                                <span class="price-change-green">&nbsp;${digitalChartData.priceChange}元</span>
+                            </#if>
                         </h4>
                         <h5>
                             均价：${digitalResultData.averagePrice}元 &nbsp; 最低价：${digitalResultData.minPrice}元

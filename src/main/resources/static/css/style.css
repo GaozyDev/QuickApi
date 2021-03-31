@@ -29,8 +29,13 @@
     display: block;
 }
 
-.price-change {
+.price-change-red {
     color: red;
+    font-size: 14px;
+}
+
+.price-change-green {
+    color: limegreen;
     font-size: 14px;
 }
 
