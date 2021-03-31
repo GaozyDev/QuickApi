@@ -19,7 +19,7 @@ public class PriceMonitorController {
     @Autowired
     private PriceMonitorService priceMonitorService;
 
-    @GetMapping("/")
+    @GetMapping("/ps5")
     public ModelAndView ps5Price(Map<String, Object> map) {
         if (PriceMonitorService.opticalAveragePriceInfo == null) {
             PriceMonitorService.opticalAveragePriceInfo = priceMonitorService.getProductPriceInfos(ProductIdEnum.PS5_OPTICAL_DRIVE);
