@@ -26,7 +26,7 @@
     <div id="title-bar">
         <h3 class="container">
             PS5价格跟踪
-            <span style="font-size: xx-small; float:right;"> ${updateTime}更新</span>
+            <span style="font-size: xx-small; float:right;"> ${updateTime}</span>
         </h3>
     </div>
 

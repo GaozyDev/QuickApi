@@ -31,7 +31,7 @@ public class PriceMonitorController {
         map.put("opticalResultData", PriceMonitorService.opticalAveragePriceInfo);
         map.put("digitalResultData", PriceMonitorService.digitalAveragePriceInfo);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd HH:mm");
         String date = sdf.format(PriceMonitorService.opticalAveragePriceInfo.getUpdateDate());
         map.put("updateTime", date);
 
