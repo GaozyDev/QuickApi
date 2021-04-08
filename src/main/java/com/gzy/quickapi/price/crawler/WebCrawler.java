@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class WebCrawler {
@@ -87,9 +89,11 @@ public class WebCrawler {
                     String title = (String) elementHandle.$eval(".feed-block h5.feed-block-title a.feed-nowrap", "node => node.innerText", new ArrayList<>());
                     String priceText = (String) elementHandle.$eval(".feed-block h5.feed-block-title div.z-highlight", "node => node.innerText", new ArrayList<>());
                     String platform = (String) elementHandle.$eval(".feed-block div.z-feed-foot span.feed-block-extras span", "node => node.innerText", new ArrayList<>());
-                    String[] text = priceText.split("元");
-                    if (text.length >= 1) {
-                        double price = Double.parseDouble(text[0]);
+                    Pattern pattern = Pattern.compile("[0-9]+(\\.[0-9]{2})?");
+                    Matcher matcher = pattern.matcher(priceText);
+                    if (matcher.find()) {
+                        System.out.println(priceText + "  ---  " + matcher.group());
+                        double price = Double.parseDouble(matcher.group());
                         ProductPriceInfo productPriceInfo = new ProductPriceInfo(title, price, platform);
                         productPriceInfoList.add(productPriceInfo);
                     }
