@@ -214,13 +214,26 @@ public class WeatherController {
             }
         }
 
-        if (Math.abs(maxTempDrop) <= 5 && maxTempRise <= 5) {
+        maxTempDrop = Math.abs(maxTempDrop);
+        if (maxTempDrop <= 3 && maxTempRise <= 3) {
             stringBuilder.append("温度变化不大。");
-        } else if (Math.abs(maxTempDrop) >= maxTempRise) {
-            stringBuilder.append("温度大幅度下降。");
+        } else if (maxTempDrop >= maxTempRise) {
+            if (maxTempDrop <= 5) {
+                stringBuilder.append("温度小幅度下降。");
+            } else if (maxTempDrop <= 7) {
+                stringBuilder.append("温度有较大幅度下降。");
+            } else {
+                stringBuilder.append("温度大幅度下降。");
+            }
             hasBadWeather = true;
         } else {
-            stringBuilder.append("温度大幅度上升。");
+            if (maxTempRise <= 5) {
+                stringBuilder.append("温度小幅度上升。");
+            } else if (maxTempRise <= 7) {
+                stringBuilder.append("温度有较大幅度上升。");
+            } else {
+                stringBuilder.append("温度大幅度上升。");
+            }
         }
         return hasBadWeather;
     }
