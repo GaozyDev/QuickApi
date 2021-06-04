@@ -189,7 +189,7 @@ public class WeatherController {
         }
 
         if (!hasBadWeather) {
-            if (clearDayCount > partlyCloudyDayCount / 2 + cloudyDayCount) {
+            if (clearDayCount > partlyCloudyDayCount / 3 + cloudyDayCount) {
                 stringBuilder.append("未来一周大部分天气不错，");
             } else {
                 stringBuilder.append("未来一周大部分阴天，");
